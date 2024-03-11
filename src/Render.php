@@ -5,24 +5,9 @@ namespace UTMTemplatec;
 use UTMTemplate\Template;
 
 
-class Render extends Template
+class Render 
 {
     public function __construct() {}
-
-    public static function html($template, $replacement_array = '')
-    {
-        return self::return($template, $replacement_array);
-    } // end Render::html()
-
-    public static function javascript($template, $replacement_array = '')
-    {
-        return self::return($template, $replacement_array, 'js');
-    } // end Render::html()
-
-    public static function stylesheet($template, $replacement_array = '')
-    {
-        return self::return($template, $replacement_array, 'css');
-    }
 
     public static function echo($template = '', $array = '')
     {

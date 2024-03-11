@@ -28,7 +28,7 @@ trait Callbacks
         'IF_CALLBACK' => 'callback_if_statement',
         'EXPLODE_CALLBACK' => 'callback_explode_callback',
     ];
-
+    
     public function callback_explode_callback($matches)
     {
         $data = str_getcsv($matches[1], ',', "'");
