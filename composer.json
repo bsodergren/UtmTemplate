@@ -1,0 +1,29 @@
+{
+    "name": "bsodergren/utmtemplate",
+    "description": "Private Packages for my code.",
+    "type": "library",
+    "license": "GPL-2.0-only",
+    "require": {
+        "php": ">=8.0",
+        "kub-at/php-simple-html-dom-parser": "^1.9",
+        "nette/utils": "^4.0",
+
+        "bsodergren/utm": "dev-main"
+        },
+    "authors": [
+        {
+            "name": "Bjorn Sodergren",
+            "role": "Original Author"
+        }
+    ],
+	"autoload": {
+        "psr-4": {
+
+            "UTMTemplate\\": "src/"
+        },
+		"classmap": ["src/"]
+	},
+   
+    "minimum-stability": "dev",
+    "prefer-stable": false
+}
