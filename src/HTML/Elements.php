@@ -2,6 +2,7 @@
 
 namespace UTMTemplate\HTML;
 
+use UTMTemplatec\Render;
 use UTMTemplate\Template;
 
 class Elements
@@ -10,7 +11,7 @@ class Elements
 
     public static function template($template)
     {
-        return Template::return($template, []);
+        return Render::return($template, []);
     }
 
     public static function stylesheet($stylesheet)
@@ -22,7 +23,7 @@ class Elements
             return '';
         }
 
-        return Template::return(self::$ElementsDir.'/link', ['CSS_URL' => __LAYOUT_URL__.$stylesheet]);
+        return Render::return(self::$ElementsDir.'/link', ['CSS_URL' => __LAYOUT_URL__.$stylesheet]);
     }
 
     public static function javascript($javafile)
@@ -34,12 +35,12 @@ class Elements
             return '';
         }
 
-        return Template::return(self::$ElementsDir.'/script', ['SCRIPT_URL' => __LAYOUT_URL__.$javafile]);
+        return Render::return(self::$ElementsDir.'/script', ['SCRIPT_URL' => __LAYOUT_URL__.$javafile]);
     }
 
     public static function addButton($text, $type = 'button', $class = 'btn button', $extra = '', $javascript = '')
     {
-        return Template::return(self::$ElementsDir.'/button', [
+        return Render::return(self::$ElementsDir.'/button', [
             'TEXT' => $text,
             'TYPE' => $type,
             'CLASS' => $class,
