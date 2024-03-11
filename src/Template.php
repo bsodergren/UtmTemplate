@@ -16,6 +16,7 @@ class Template
     public static $flushdummy;
     public static $BarStarted = false;
     public static $BarHeight = 30;
+    public static $params = [];
 
     private static $RenderHTML = '';
 
@@ -116,7 +117,7 @@ class Template
         // $html_text     = preg_replace_callback('/(!!(\w+,?\w+)!!)(.*)(!!)/iU', [$this, 'callback_badge'], $html_text);
     }
 
-    public function template($template = '', $replacement_array = '', $extension = 'html')
+    public function template($template = '', $replacement_array = [], $extension = 'html')
     {
         unset($this->replacement_array);
         if ('' == $extension) {
@@ -139,6 +140,7 @@ class Template
 
         $html_text = file_get_contents($template_file);
         $replacement_array['self'] = $template;
+        $replacement_array = array_merge($replacement_array,self::$params);
         $this->replacement_array = $replacement_array;
 
         $html_text = $this->parseHtml($html_text);
