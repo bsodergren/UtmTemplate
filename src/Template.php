@@ -112,6 +112,7 @@ class Template
 
         foreach ($this->registered_callbacks as $pattern => $function) {
            
+            utmdump([$pattern,$function]);
             $html_text = preg_replace_callback(constant('self::'.$pattern), [$this, $function], $html_text);
         }
         // $html_text = preg_replace_callback(self::LANG_CALLBACK, [$this, 'callback_text_variable'], $html_text);
