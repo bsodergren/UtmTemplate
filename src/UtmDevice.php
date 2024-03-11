@@ -5,10 +5,10 @@
 
 namespace UTMTemplate;
 
+use Nette\Utils\FileSystem;
 use UTMTemplate\Browser\Browser;
 use UTMTemplate\Browser\Device;
 use UTMTemplate\Browser\Os;
-use Nette\Utils\FileSystem;
 
 class UtmDevice
 {
@@ -49,7 +49,7 @@ class UtmDevice
          *
          *
          */
-        //return 'APPLICATION';
+        // return 'APPLICATION';
         if ('Edge' == $browser->getName()) {
             if ('Windows' == $os->getName()) {
                 return 'DESKTOP';
