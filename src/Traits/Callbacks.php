@@ -7,7 +7,6 @@ use UTMTemplate\HTML\Elements;
 
 trait Callbacks
 {
-    public const FUNCTION_CALLBACK = '|{{function=([a-zA-Z_]+)\|?(.*)?}}|i';
     public const STYLESHEET_CALLBACK = '|{{(stylesheet)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}}|i';
     public const JAVASCRIPT_CALLBACK = '|{{(javascript)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}}|i';
     public const TEMPLATE_CALLBACK = '|{{(template)=([a-zA-Z-_/\.]+)\|?(.*)?}}|i';
