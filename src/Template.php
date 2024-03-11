@@ -12,6 +12,7 @@ class Template
     public $html;
 
     public static $Render = false;
+    public static $registeredCallbacks = false;
     public static $flushdummy;
     public static $BarStarted = false;
     public static $BarHeight = 30;
@@ -28,6 +29,9 @@ class Template
             $flushdummy .= '      ';
         }
         self::$flushdummy = $flushdummy;
+        if(self::$registeredCallbacks == true){
+            $this->registerCallback(self::$registeredCallbacks);
+        }
     }
 
     public function registerCallback($constant, $function = '')
