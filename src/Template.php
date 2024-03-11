@@ -20,10 +20,6 @@ class Template
 
     public function __construct()
     {
-        // $this->registerCallback(
-  
-        //         );
-
         ob_implicit_flush(true);
         @ob_end_flush();
 
@@ -32,13 +28,11 @@ class Template
             $flushdummy .= '      ';
         }
         self::$flushdummy = $flushdummy;
-
     }
 
     public function registerCallback($constant, $function = '')
     {
         if (\is_array($constant)) {
-           
             foreach ($constant as $key => $value) {
                 $this->registerCallback($key, $value);
             }
@@ -48,6 +42,7 @@ class Template
             }
         }
     }
+
     public static function ProgressBar($timeout = 5, $name = 'theBar')
     {
         if ('start' == strtolower($timeout)) {
@@ -95,23 +90,28 @@ class Template
         flush();
         @ob_flush();
     }
+
     public function parseHtml($html_text)
     {
-        foreach ($this->registered_callbacks as $pattern => $function)
-        {
-            if(!str_contains($pattern,'::')){
+        foreach ($this->registered_callbacks as $pattern => $function) {
+            if (!str_contains($pattern, '::')) {
                 $pattern = 'self::'.$pattern;
+                $class = $this;
+            } else {
+                $parts = explode('::', $pattern);
+                // UtmDump([$pattern,$parts,$function]);
+                $class = (new $parts[0]());
+                // $function = $parts[1];
             }
-            $html_text = preg_replace_callback(constant($pattern), [$this, $function], $html_text);
+
+            $html_text = preg_replace_callback(\constant($pattern), [$class, $function], $html_text);
         }
 
-        $html_text = preg_replace_callback('/(##(\w+,?\w+)##)(.*)(##)/iU', [$this, 'callback_color'], $html_text);
+        return preg_replace_callback('/(##(\w+,?\w+)##)(.*)(##)/iU', [$this, 'callback_color'], $html_text);
 
         // $html_text     = preg_replace_callback('/(!!(\w+,?\w+)!!)(.*)(!!)/iU', [$this, 'callback_badge'], $html_text);
-        return $html_text;
-
     }
-    
+
     public function template($template = '', $replacement_array = '', $extension = 'html')
     {
         unset($this->replacement_array);
