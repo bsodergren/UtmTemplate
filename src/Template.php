@@ -2,9 +2,9 @@
 
 namespace UTMTemplate;
 
-use UTMTemplatec\Render;
 use UTM\Utilities\Colors;
 use UTMTemplate\Traits\Callbacks;
+use UTMTemplatec\Render;
 
 class Template
 {
@@ -130,5 +130,4 @@ class Template
 
         return $html_text;
     }
-
 }
