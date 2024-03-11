@@ -15,8 +15,19 @@ trait Callbacks
     public const JS_VAR_CALLBACK = '|!!([a-zA-Z_-]+)!!|';
     public const IF_CALLBACK = '|{if="([^"]+)"}(.*?){\/if}|misu';
     public const CSS_VAR_CALLBACK = '|\$([a-zA-Z_-]+)\$|';
-
     public const EXPLODE_CALLBACK = '|{replace="?([^"]+)"?}|mis';
+
+    public $registered_callbacks = [
+        'LANG_CALLBACK' => 'callback_text_variable',
+        'VARIABLE_CALLBACK' => 'callback_parse_variable',
+        'JS_VAR_CALLBACK' => 'callback_parse_variable',
+        'CSS_VAR_CALLBACK' => 'callback_parse_variable',
+        'STYLESHEET_CALLBACK' => 'callback_parse_include',
+        'JAVASCRIPT_CALLBACK' => 'callback_parse_include',
+        'TEMPLATE_CALLBACK' => 'callback_parse_include',
+        'IF_CALLBACK' => 'callback_if_statement',
+        'EXPLODE_CALLBACK' => 'callback_explode_callback',
+    ];
 
     public function callback_explode_callback($matches)
     {

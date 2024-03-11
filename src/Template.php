@@ -30,6 +30,13 @@ class Template
         self::$flushdummy = $flushdummy;
     }
 
+    public function registerCallback($constant,$function)
+    {
+        if(!array_key_exists($constant,$this->registered_callbacks)) {
+            $this->registered_callbacks = array_merge($this->registered_callbacks, [$constant => $function]);
+        }
+
+    }
     public static function ProgressBar($timeout = 5, $name = 'theBar')
     {
         if ('start' == strtolower($timeout)) {
@@ -103,16 +110,19 @@ class Template
         $replacement_array['self'] = $template;
         $this->replacement_array = $replacement_array;
 
-        $html_text = preg_replace_callback(self::LANG_CALLBACK, [$this, 'callback_text_variable'], $html_text);
-        $html_text = preg_replace_callback(self::VARIABLE_CALLBACK, [$this, 'callback_parse_variable'], $html_text);
-        $html_text = preg_replace_callback(self::JS_VAR_CALLBACK, [$this, 'callback_parse_variable'], $html_text);
-        $html_text = preg_replace_callback(self::CSS_VAR_CALLBACK, [$this, 'callback_parse_variable'], $html_text);
-        $html_text = preg_replace_callback(self::FUNCTION_CALLBACK, [$this, 'callback_parse_function'], $html_text);
-        $html_text = preg_replace_callback(self::STYLESHEET_CALLBACK, [$this, 'callback_parse_include'], $html_text);
-        $html_text = preg_replace_callback(self::JAVASCRIPT_CALLBACK, [$this, 'callback_parse_include'], $html_text);
-        $html_text = preg_replace_callback(self::TEMPLATE_CALLBACK, [$this, 'callback_parse_include'], $html_text);
-        $html_text = preg_replace_callback(self::IF_CALLBACK, [$this, 'callback_if_statement'], $html_text);
-        $html_text = preg_replace_callback(self::EXPLODE_CALLBACK, [$this, 'callback_explode_callback'], $html_text);
+        foreach ($this->registered_callbacks as $pattern => $function) {
+           
+            $html_text = preg_replace_callback(constant('self::'.$pattern), [$this, $function], $html_text);
+        }
+        // $html_text = preg_replace_callback(self::LANG_CALLBACK, [$this, 'callback_text_variable'], $html_text);
+        // $html_text = preg_replace_callback(self::VARIABLE_CALLBACK, [$this, 'callback_parse_variable'], $html_text);
+        // $html_text = preg_replace_callback(self::JS_VAR_CALLBACK, [$this, 'callback_parse_variable'], $html_text);
+        // $html_text = preg_replace_callback(self::CSS_VAR_CALLBACK, [$this, 'callback_parse_variable'], $html_text);
+        // $html_text = preg_replace_callback(self::STYLESHEET_CALLBACK, [$this, 'callback_parse_include'], $html_text);
+        // $html_text = preg_replace_callback(self::JAVASCRIPT_CALLBACK, [$this, 'callback_parse_include'], $html_text);
+        // $html_text = preg_replace_callback(self::TEMPLATE_CALLBACK, [$this, 'callback_parse_include'], $html_text);
+        // $html_text = preg_replace_callback(self::IF_CALLBACK, [$this, 'callback_if_statement'], $html_text);
+        // $html_text = preg_replace_callback(self::EXPLODE_CALLBACK, [$this, 'callback_explode_callback'], $html_text);
 
         $html_text = preg_replace_callback('/(##(\w+,?\w+)##)(.*)(##)/iU', [$this, 'callback_color'], $html_text);
 
