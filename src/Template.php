@@ -110,10 +110,9 @@ class Template
         $replacement_array['self'] = $template;
         $this->replacement_array = $replacement_array;
 
-        foreach ($this->registered_callbacks as $pattern => $function) {
-           
-            utmdump([$pattern,$function]);
-            $html_text = preg_replace_callback(constant('self::'.$pattern), [$this, $function], $html_text);
+        foreach ($this->registered_callbacks as $pattern => $function)
+        {
+                       $html_text = preg_replace_callback(constant('self::'.$pattern), [$this, $function], $html_text);
         }
         // $html_text = preg_replace_callback(self::LANG_CALLBACK, [$this, 'callback_text_variable'], $html_text);
         // $html_text = preg_replace_callback(self::VARIABLE_CALLBACK, [$this, 'callback_parse_variable'], $html_text);
