@@ -70,7 +70,6 @@ trait Callbacks
         $key = $matches[1];
         $text = $this->parse_variable($matches);
         if ($text == $key) {
-            dump([$this->template_file, $text]);
 
             return $text;
         }
