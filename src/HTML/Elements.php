@@ -55,8 +55,8 @@ class Elements
         $class = 'filter-option text-bg-primary',
         $disabled = null)
     {
-        $disabled_style = ' style="background-color: rgba(32, 32,32, 0.5) !important;" ';
-        $selected_style = ' style="background-color: rgba(0, 0,0, 0.5)!important;" ';
+        // $disabled_style = ' style="background-color: rgba(32, 32,32, 0.5) !important;" ';
+        // $selected_style = ' style="background-color: rgba(0, 0,0, 0.5)!important;" ';
 
         $html = '';
         $option_selected = [];
@@ -74,6 +74,7 @@ class Elements
 
         foreach ($array as $idx => $val) {
             $optionDisabled = false;
+            $checked = false;
             if (\is_array($val)) {
                 $text = $val['text'];
                 $value = $val['value'];
@@ -101,12 +102,20 @@ class Elements
 
         if (null !== $blank) {
             if (false === $checked) {
-                $default = ' selected';
-                $option_default[] = '<option class="'.$class.'" value=""  selected>'.$blank.'</option>'."\n";
+                $option_default[] = '<option style="background-color: #cccccc;" disabled selected>Select An Option</option>'."\n";
+
+                // $option_default[] = '<option class="'.$class.'" value=""  selected>'.$blank.'</option>'."\n";
             }
         }
-        $optionsArray = array_merge($option_default, $option_selected, $options, $option_disabled);
-        $html = implode("\n", $optionsArray);
+
+        $sep = '<option style="font-size: 1pt; background-color: #000000;" disabled>&nbsp;</option>';
+        $optionsArray[] = implode("\n", $option_default);
+        $optionsArray[] = implode("\n", $options);
+
+        $optionsArray[] = implode("\n", $option_selected);
+        $optionsArray[] = implode("\n", $option_disabled);
+
+        $html = implode($sep, $optionsArray);
 
         return $html;
     }
