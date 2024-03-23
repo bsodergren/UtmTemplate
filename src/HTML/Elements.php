@@ -3,7 +3,6 @@
 namespace UTMTemplate\HTML;
 
 use UTMTemplatec\Render;
-use UTMTemplate\Template;
 
 class Elements
 {
@@ -49,15 +48,32 @@ class Elements
         ]);
     }
 
-    public static function SelectOptions($array, $selected = '', $blank = null, $class = 'filter-option text-bg-primary')
+    public static function SelectOptions(
+        $array,
+        $selected = null,
+        $blank = null,
+        $class = 'filter-option text-bg-primary',
+        $disabled = null)
     {
-        $html = '';
-        $default_option = '';
-        $default = '';
-        $checked = '';
-        foreach ($array as $val) {
-            $checked = '';
+        $disabled_style = ' style="background-color: rgba(32, 32,32, 0.5) !important;" ';
+        $selected_style = ' style="background-color: rgba(0, 0,0, 0.5)!important;" ';
 
+        $html = '';
+        $option_selected = [];
+        $options = [];
+        $option_default = [];
+        $option_disabled = [];
+
+        if (\is_array($selected)) {
+            $matchKey = array_key_first($selected);
+            $matchValue = $selected[$matchKey];
+        } else {
+            $matchKey = 'text';
+            $matchValue = $selected;
+        }
+
+        foreach ($array as $idx => $val) {
+            $optionDisabled = false;
             if (\is_array($val)) {
                 $text = $val['text'];
                 $value = $val['value'];
@@ -65,21 +81,34 @@ class Elements
                 $text = $val;
                 $value = $val;
             }
-
-            if ($text == $selected) {
-                $checked = ' selected';
+            if (str_contains($disabled, $value)) {
+                $optionDisabled = true;
             }
 
-            $html .= '<option class="'.$class.'" value="'.$value.'" '.$checked.'>'.$text.'</option>'."\n";
+            if (null !== $matchValue) {
+                if (${$matchKey} == $matchValue) {
+                    $checked = true;
+                    $option_selected[] = '<option class="'.$class.'" value="'.$value.'" '.$selected_style.' disabled selected>'.$text.'</option>'."\n";
+                    continue;
+                }
+            }
+            if (true === $optionDisabled) {
+                $option_disabled[] = '<option class="'.$class.'" value="'.$value.'" '.$disabled_style.' disabled>'.$text.'</option>'."\n";
+                continue;
+            }
+            $options[] = '<option class="'.$class.'" value="'.$value.'">'.$text.'</option>'."\n";
         }
+
         if (null !== $blank) {
-            if ('' == $checked) {
+            if (false === $checked) {
                 $default = ' selected';
+                $option_default[] = '<option class="'.$class.'" value=""  selected>'.$blank.'</option>'."\n";
             }
-            $default_option = '<option class="'.$class.'" value=""  '.$default.'>'.$blank.'</option>'."\n";
         }
+        $optionsArray = array_merge($option_default, $option_selected, $options, $option_disabled);
+        $html = implode("\n", $optionsArray);
 
-        return $default_option.$html;
+        return $html;
     }
 
     public static function add_hidden($name, $value, $attributes = '')
