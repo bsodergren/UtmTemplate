@@ -48,6 +48,7 @@ class Elements
         ]);
     }
 
+<<<<<<< HEAD
     public static function SelectOptions(
         $array,
         $selected = null,
@@ -57,6 +58,25 @@ class Elements
     {
         // $disabled_style = ' style="background-color: rgba(32, 32,32, 0.5) !important;" ';
         // $selected_style = ' style="background-color: rgba(0, 0,0, 0.5)!important;" ';
+=======
+    public static function SelectOptions($array, $selected = null, $blank = null, $class = 'filter-option text-bg-primary')
+    {
+        $html = '';
+        $default_option = '';
+        $default = '';
+        $checked = '';
+
+        if(is_array($selected)) {
+            $matchKey = array_key_first($selected);
+            $matchValue = $selected[$matchKey];
+        } else {
+            $matchKey = 'text';
+            $matchValue = $selected;
+        }
+
+        foreach ($array as $val) {
+            $checked = '';
+>>>>>>> 75a05ce (hh)
 
         $html = '';
         $option_selected = [];
@@ -82,6 +102,7 @@ class Elements
                 $text = $val;
                 $value = $val;
             }
+<<<<<<< HEAD
             if (str_contains($disabled, $value)) {
                 $optionDisabled = true;
             }
@@ -98,6 +119,15 @@ class Elements
                 continue;
             }
             $options[] = '<option class="'.$class.'" value="'.$value.'">'.$text.'</option>'."\n";
+=======
+
+            if($matchValue !== null){
+                if ($$matchKey == $matchValue) {
+                    $checked = ' selected';
+                }
+            }
+            $html .= '<option class="'.$class.'" value="'.$value.'" '.$checked.'>'.$text.'</option>'."\n";
+>>>>>>> 75a05ce (hh)
         }
 
         if (null !== $blank) {
