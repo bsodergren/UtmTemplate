@@ -142,7 +142,10 @@ class Template
         $replacement_array['self'] = $template;
         $replacement_array = array_merge($replacement_array,self::$params);
         $this->replacement_array = $replacement_array;
+        if($extension == ".html" && OptionIsTrue("SHOW_TEMPLATE")){
+            $html_text = '<!-- {$self} --> '."\n".$html_text ."\n".'<!-- end {$self} -->'."\n";
 
+        }
         $html_text = $this->parseHtml($html_text);
 
         if ('.js' == $extension) {
