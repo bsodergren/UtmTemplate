@@ -41,7 +41,7 @@ class Template
             $flushdummy .= '      ';
         }
         self::$flushdummy = $flushdummy;
-        if(self::$registeredCallbacks == true){
+        if (true == self::$registeredCallbacks) {
             $this->registerCallback(self::$registeredCallbacks);
         }
     }
@@ -109,10 +109,6 @@ class Template
 
     public function parseHtml($html_text)
     {
-
-        
-
-
         foreach ($this->registered_callbacks as $pattern => $function) {
             if (!str_contains($pattern, '::')) {
                 $pattern = 'self::'.$pattern;
@@ -131,6 +127,7 @@ class Template
 
         // $html_text     = preg_replace_callback('/(!!(\w+,?\w+)!!)(.*)(!!)/iU', [$this, 'callback_badge'], $html_text);
     }
+
     private function getTemplateFile($template, $extension = 'HTML')
     {
         if ('' == $extension) {
@@ -139,7 +136,6 @@ class Template
 
         $extension = '.'.$extension;
         $template_file = self::$USER_TEMPLATE_DIR.'/'.$template.$extension;
-        
 
         if (!file_exists($template_file)) {
             $template_file = self::$TEMPLATE_DIR.'/'.$template.$extension;
@@ -148,9 +144,9 @@ class Template
                 $html_text .= 'FOR <pre>'.$template_file.'</pre></h1> <br>';
                 utmdump($html_text);
                 $this->html = $html_text;
+
                 return $html_text;
             }
-           
         }
 
         $this->template_file = $template.$extension;
@@ -161,22 +157,20 @@ class Template
     public function template($template = '', $replacement_array = [], $extension = 'html')
     {
         unset($this->replacement_array);
-        $html_text = $this->getTemplateFile($template,$extension);
+        $html_text = $this->getTemplateFile($template, $extension);
 
         $replacement_array['self'] = $this->template_file;
-        $replacement_array = array_merge($replacement_array,self::$params);
+        $replacement_array = array_merge($replacement_array, self::$params);
         $this->replacement_array = $replacement_array;
 
-        if($extension == ".html" && self::$TEMPLATE_COMMENTS == true)
-        {
+        if ('.html' == $extension && true == self::$TEMPLATE_COMMENTS) {
             $_text = '<!-- {$self} --> '.\PHP_EOL;
-            $_text .= trim($html_text) .\PHP_EOL;
+            $_text .= trim($html_text).\PHP_EOL;
             $_text .= '<!-- end {$self} -->'.\PHP_EOL;
             $html_text = $_text;
             unset($_text);
-
         }
-    
+
         $html_text = $this->parseHtml($html_text);
 
         if ('.js' == $extension) {
