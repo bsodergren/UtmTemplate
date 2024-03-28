@@ -7,23 +7,22 @@
         "php": ">=8.0",
         "kub-at/php-simple-html-dom-parser": "^1.9",
         "nette/utils": "^4.0",
-
         "bsodergren/utm": "dev-main"
-        },
+    },
     "authors": [
         {
             "name": "Bjorn Sodergren",
             "role": "Original Author"
         }
     ],
-	"autoload": {
+    "autoload": {
         "psr-4": {
-
             "UTMTemplate\\": "src/"
         },
-		"classmap": ["src/"]
-	},
-   
-    "minimum-stability": "dev",
+        "classmap": [
+            "src/"
+        ]
+    },
+    "minimum-stability": "stable",
     "prefer-stable": false
 }
