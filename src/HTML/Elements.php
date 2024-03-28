@@ -2,6 +2,10 @@
 
 namespace UTMTemplate\HTML;
 
+<<<<<<< HEAD
+=======
+use UTMTemplate\Template;
+>>>>>>> d31f686 (update)
 use UTMTemplatec\Render;
 
 class Elements
@@ -16,25 +20,25 @@ class Elements
     public static function stylesheet($stylesheet)
     {
         $stylesheet = 'css/'.$stylesheet;
-        $file = __LAYOUT_PATH__.'/'.$stylesheet;
+        $file = Template::$SITE_PATH.'/'.$stylesheet;
 
         if (false == file_exists($file)) {
             return '';
         }
 
-        return Render::return(self::$ElementsDir.'/link', ['CSS_URL' => __LAYOUT_URL__.$stylesheet]);
+        return Render::return(self::$ElementsDir.'/link', ['CSS_URL' => Template::$SITE_URL.$stylesheet]);
     }
 
     public static function javascript($javafile)
     {
         $javafile = 'js/'.$javafile;
-        $file = __LAYOUT_PATH__.'/'.$javafile;
+        $file = Template::$SITE_PATH.'/'.$javafile;
 
         if (false == file_exists($file)) {
             return '';
         }
 
-        return Render::return(self::$ElementsDir.'/script', ['SCRIPT_URL' => __LAYOUT_URL__.$javafile]);
+        return Render::return(self::$ElementsDir.'/script', ['SCRIPT_URL' => Template::$SITE_URL.$javafile]);
     }
 
     public static function addButton($text, $type = 'button', $class = 'btn button', $extra = '', $javascript = '')
@@ -66,7 +70,7 @@ class Elements
         $default = '';
         $checked = '';
 
-        if(is_array($selected)) {
+        if (\is_array($selected)) {
             $matchKey = array_key_first($selected);
             $matchValue = $selected[$matchKey];
         } else {
@@ -121,8 +125,8 @@ class Elements
             $options[] = '<option class="'.$class.'" value="'.$value.'">'.$text.'</option>'."\n";
 =======
 
-            if($matchValue !== null){
-                if ($$matchKey == $matchValue) {
+            if (null !== $matchValue) {
+                if (${$matchKey} == $matchValue) {
                     $checked = ' selected';
                 }
             }

@@ -17,10 +17,21 @@ class Template
     public static $BarStarted = false;
     public static $BarHeight = 30;
     public static $params = [];
+    public static $TEMPLATE_DIR = __DIR__.'/src/Templates';
+    public static $USER_TEMPLATE_DIR = '';
+    public static $THEME_DIR = '';
+    public static $TEMPLATE_COMMENTS = true;
+
+    public static $SITE_URL = '';
+    public static $SITE_PATH = '';
+    public static $ASSETS_URL = '';
+
+    private $template_file;
+    private $replacement_array;
 
     private static $RenderHTML = '';
 
-    public function __construct()
+    public function __construct($options = [])
     {
         ob_implicit_flush(true);
         @ob_end_flush();
@@ -98,6 +109,10 @@ class Template
 
     public function parseHtml($html_text)
     {
+
+        
+
+
         foreach ($this->registered_callbacks as $pattern => $function) {
             if (!str_contains($pattern, '::')) {
                 $pattern = 'self::'.$pattern;
@@ -116,36 +131,52 @@ class Template
 
         // $html_text     = preg_replace_callback('/(!!(\w+,?\w+)!!)(.*)(!!)/iU', [$this, 'callback_badge'], $html_text);
     }
-
-    public function template($template = '', $replacement_array = [], $extension = 'html')
+    private function getTemplateFile($template, $extension = 'HTML')
     {
-        unset($this->replacement_array);
         if ('' == $extension) {
             $extension = 'html';
         }
 
         $extension = '.'.$extension;
+        $template_file = self::$USER_TEMPLATE_DIR.'/'.$template.$extension;
+        
 
-        $template_file = __HTML_TEMPLATE__.'/'.$template.$extension;
         if (!file_exists($template_file)) {
-            $html_text = '<h1>NO TEMPLATE FOUND<br>';
-            $html_text .= 'FOR <pre>'.$template_file.'</pre></h1> <br>';
-            utmdump($html_text);
-            $this->html = $html_text;
-
-            return $html_text;
+            $template_file = self::$TEMPLATE_DIR.'/'.$template.$extension;
+            if (!file_exists($template_file)) {
+                $html_text = '<h1>NO TEMPLATE FOUND<br>';
+                $html_text .= 'FOR <pre>'.$template_file.'</pre></h1> <br>';
+                utmdump($html_text);
+                $this->html = $html_text;
+                return $html_text;
+            }
+           
         }
 
         $this->template_file = $template.$extension;
 
-        $html_text = file_get_contents($template_file);
-        $replacement_array['self'] = $template;
+        return file_get_contents($this->template_file);
+    }
+
+    public function template($template = '', $replacement_array = [], $extension = 'html')
+    {
+        unset($this->replacement_array);
+        $html_text = $this->getTemplateFile($template,$extension);
+
+        $replacement_array['self'] = $this->template_file;
         $replacement_array = array_merge($replacement_array,self::$params);
         $this->replacement_array = $replacement_array;
-        if($extension == ".html" && OptionIsTrue("SHOW_TEMPLATE")){
-            $html_text = '<!-- {$self} --> '."\n".$html_text ."\n".'<!-- end {$self} -->'."\n";
+
+        if($extension == ".html" && self::$TEMPLATE_COMMENTS == true)
+        {
+            $_text = '<!-- {$self} --> '.\PHP_EOL;
+            $_text .= trim($html_text) .\PHP_EOL;
+            $_text .= '<!-- end {$self} -->'.\PHP_EOL;
+            $html_text = $_text;
+            unset($_text);
 
         }
+    
         $html_text = $this->parseHtml($html_text);
 
         if ('.js' == $extension) {
