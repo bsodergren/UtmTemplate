@@ -1,27 +1,43 @@
 <?php
-/**
- * CWP Media tool for load flags.
- */
 
 namespace UTMTemplate;
 
-use Nette\Utils\FileSystem;
 use UTMTemplate\Browser\Browser;
 use UTMTemplate\Browser\Device;
 use UTMTemplate\Browser\Os;
 
 class UtmDevice
 {
-    public static $DEVICE = 'APPLICATION';
+    public static $DEVICE = 'DESKTOP';
+    public static $DETECT_BROWSER = false;
+    public static $MOBILE_DEVICE = false;
 
-    public static $default_theme = 'application';
+    public static $MOBILE_TEMPLATE = false;
+    public static $DEFAULT_TEMPLATE = false;
 
-    public static $NAVBAR = true;
-    public static $USEJAVASCRIPT = false;
+    public static $USER_MOBILE_TEMPLATE = '';
+    public static $USER_DEFAULT_TEMPLATE = '';
+
+    public static $MOBILE_ASSETS_URL = '';
+    public static $MOBILE_ASSETS_PATH = '';
+
+    public static $template_path = [
+        'APPLICATION' => 'Default',
+        'MOBILE' => 'Mobile',
+        'DESKTOP' => 'Default',
+    ];
 
     public function __construct()
     {
+        self::$DETECT_BROWSER = true;
         self::$DEVICE = $this->run();
+        if (false === self::$DEFAULT_TEMPLATE) {
+            self::$DEFAULT_TEMPLATE = Template::$TEMPLATE_DIR;
+        }
+
+        if (false === self::$MOBILE_TEMPLATE) {
+            self::$MOBILE_TEMPLATE = __DIR__.\DIRECTORY_SEPARATOR.'Templates'.\DIRECTORY_SEPARATOR.self::$template_path[self::$DEVICE];
+        }
     }
 
     public function run()
@@ -53,9 +69,11 @@ class UtmDevice
         if ('Edge' == $browser->getName()) {
             if ('Windows' == $os->getName()) {
                 return 'DESKTOP';
-            } elseif ('iOS' == $os->getName()) {
+            }
+            if ('iOS' == $os->getName()) {
                 return 'MOBILE';
-            } elseif ('unknown' == $device->getName()) {
+            }
+            if ('unknown' == $device->getName()) {
                 return 'DESKTOP';
             }
         } elseif ('Chrome' == $browser->getName()) {
@@ -68,40 +86,8 @@ class UtmDevice
             }
         }
 
-        return 'APPLICATION';
+        return 'DESKTOP';
         // return [$browser->getName(), $device->getName(), $os->getName()];
-    }
-
-    private static function getDevicePath()
-    {
-        $ClassName = ucfirst(strtolower(self::$DEVICE));
-
-        return 'CWP\\Template\\'.$ClassName;
-    }
-
-    public static function getHeader($template = '', $params = [])
-    {
-        $className = self::getDevicePath().'\\Header';
-
-        if (class_exists($className)) {
-            return $className::Display($template, $params);
-        }
-    }
-
-    public static function getNavbar($template = '', $params = [])
-    {
-        $className = self::getDevicePath().'\\Navbar';
-        if (class_exists($className)) {
-            return $className::Display($template, $params);
-        }
-    }
-
-    public static function getFooter($template = '', $params = [])
-    {
-        $className = self::getDevicePath().'\\Footer';
-        if (class_exists($className)) {
-            return $className::Display($template, $params);
-        }
     }
 
     public static function getAssetURL($type, $files)
@@ -109,10 +95,10 @@ class UtmDevice
         $html = null;
 
         foreach ($files as $file) {
-            $filePath = self::getThemepath(__LAYOUT_URL_PATH__).DIRECTORY_SEPARATOR.$file;
+            $filePath = self::getThemepath(__LAYOUT_URL_PATH__).\DIRECTORY_SEPARATOR.$file;
             $url = __URL_LAYOUT__.'/'.strtolower(self::$DEVICE).'/'.$file;
             if (!file_exists($filePath)) {
-                $filePath = self::getDefaultTheme(__LAYOUT_URL_PATH__).DIRECTORY_SEPARATOR.$file;
+                $filePath = self::getDefaultTheme(__LAYOUT_URL_PATH__).\DIRECTORY_SEPARATOR.$file;
                 $url = __URL_LAYOUT__.'/'.strtolower(self::$default_theme).'/'.$file;
                 if (!file_exists($filePath)) {
                     $url = null;
@@ -136,42 +122,5 @@ class UtmDevice
         }
 
         return $html;
-    }
-
-    public static function getThemePath($dir = __THEME_DIR__)
-    {
-        // dd(self::$DEVICE);
-        return $dir.'/'.strtolower(self::$DEVICE);
-    }
-
-    public static function getDefaultTheme($dir = __THEME_DIR__)
-    {
-        return $dir.'/'.strtolower(self::$default_theme);
-    }
-
-    public static function getTemplateFile($template, $js = false)
-    {
-        $extension = '.html';
-        if (true === $js) {
-            $extension = '.js';
-        }
-
-        $template = str_replace($extension, '', $template);
-
-        $template_file = self::getThemePath().DIRECTORY_SEPARATOR.$template.$extension;
-        $template_file = FileSystem::platformSlashes($template_file);
-        $template_file = FileSystem::normalizePath($template_file);
-
-        if (!file_exists($template_file)) {
-            $template_file = self::getDefaultTheme().DIRECTORY_SEPARATOR.$template.$extension;
-            $template_file = FileSystem::platformSlashes($template_file);
-            $template_file = FileSystem::normalizePath($template_file);
-
-            if (!file_exists($template_file)) {
-                $template_file = null;
-            }
-        }
-
-        return $template_file;
     }
 }

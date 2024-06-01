@@ -3,19 +3,12 @@
 namespace UTMTemplate\Traits;
 
 use KubAT\PhpSimple\HtmlDomParser;
+use UTMTemplate\Functions\Traits\Parser;
 use UTMTemplate\HTML\Elements;
 
 trait Callbacks
 {
-    public const STYLESHEET_CALLBACK = '|{{(stylesheet)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}}|i';
-    public const JAVASCRIPT_CALLBACK = '|{{(javascript)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}}|i';
-    public const TEMPLATE_CALLBACK = '|{{(template)=([a-zA-Z-_/\.]+)\|?(.*)?}}|i';
-    public const VARIABLE_CALLBACK = '|{\$([a-zA-Z_-]+)}|';
-    public const LANG_CALLBACK = '|{L ([a-zA-Z_]+)}|';
-    public const JS_VAR_CALLBACK = '|!!([a-zA-Z_-]+)!!|';
-    public const IF_CALLBACK = '|{if="([^"]+)"}(.*?){\/if}|misu';
-    public const CSS_VAR_CALLBACK = '|\$([a-zA-Z_-]+)\$|';
-    public const EXPLODE_CALLBACK = '|{replace="?([^"]+)"?}|mis';
+    use Parser;
 
     public $registered_callbacks = [
         'LANG_CALLBACK' => 'callback_text_variable',
@@ -27,7 +20,19 @@ trait Callbacks
         'TEMPLATE_CALLBACK' => 'callback_parse_include',
         'IF_CALLBACK' => 'callback_if_statement',
         'EXPLODE_CALLBACK' => 'callback_explode_callback',
+        'BUTTON_CALLBACK' => 'callback_parse_button',
+        'ICON_CALLBACK' => 'callback_parse_icon',
     ];
+
+    public function callback_parse_icon($matches)
+    {
+        return self::Icons($matches[1], $matches);
+    }
+
+    public function callback_parse_button($matches)
+    {
+        utmdump($matches);
+    }
 
     public function callback_explode_callback($matches)
     {
@@ -48,29 +53,11 @@ trait Callbacks
         return $return;
     }
 
-    private function parse_variable($matches)
-    {
-        $key = $matches[1];
-
-        if (\defined($key)) {
-            return \constant($key);
-        }
-        if (\is_array($this->replacement_array)) {
-            if (\array_key_exists($key, $this->replacement_array)) {
-                return $this->replacement_array[$key];
-                //  unset($this->replacement_array[$key]);
-            }
-        }
-
-        return $key;
-    }
-
     public function callback_text_variable($matches)
     {
         $key = $matches[1];
         $text = $this->parse_variable($matches);
         if ($text == $key) {
-
             return $text;
         }
 
@@ -91,11 +78,6 @@ trait Callbacks
     public function callback_parse_include($matches)
     {
         $method = $matches[1];
-
-        if (str_contains($matches[3], 'render')) {
-            // $parts = explode(",",$matches[3]);
-            // $vars = explode("=",$parts[1]);
-        }
 
         return Elements::$method($matches[2]);
     }
@@ -122,17 +104,6 @@ trait Callbacks
 
         return $dom;
     }
-
-    // public function callback_parse_function($matches)
-    // {
-    //     $helper = new Functions();
-    //     $method = $matches[1];
-
-    //     // $value = Helper::$method();
-    //     // if(method_exists($helper,$method)){
-    //     return $helper->{$method}($matches);
-    //     // }
-    // }
 
     private function callback_badge($matches)
     {

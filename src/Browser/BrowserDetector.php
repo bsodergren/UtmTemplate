@@ -1,13 +1,10 @@
 <?php
-/**
- * CWP Media tool for load flags
- */
 
 namespace UTMTemplate\Browser;
 
 class BrowserDetector implements DetectorInterface
 {
-    public const FUNC_PREFIX       = 'checkBrowser';
+    public const FUNC_PREFIX = 'checkBrowser';
 
     protected static $userAgentString;
 
@@ -81,7 +78,7 @@ class BrowserDetector implements DetectorInterface
      */
     public static function detect(Browser $browser, UserAgent $userAgent = null)
     {
-        self::$browser         = $browser;
+        self::$browser = $browser;
         if (null === $userAgent) {
             $userAgent = self::$browser->getUserAgent();
         }
@@ -160,7 +157,8 @@ class BrowserDetector implements DetectorInterface
             self::$browser->setName(Browser::BLACKBERRY);
 
             return true;
-        } elseif (false !== stripos(self::$userAgentString, 'BB10')) {
+        }
+        if (false !== stripos(self::$userAgentString, 'BB10')) {
             $aresult = explode('Version/10.', self::$userAgentString);
             if (isset($aresult[1])) {
                 $aversion = explode(' ', $aresult[1]);
@@ -211,101 +209,98 @@ class BrowserDetector implements DetectorInterface
 
             return true;
         } // Test for versions > 1.5 and < 11 and some cases of 11
-        else {
-            if (false !== stripos(self::$userAgentString, 'msie') && false === stripos(self::$userAgentString, 'opera')
-            ) {
-                // See if the browser is the odd MSN Explorer
-                if (false !== stripos(self::$userAgentString, 'msnb')) {
-                    $aresult = explode(' ', stristr(str_replace(';', '; ', self::$userAgentString), 'MSN'));
-                    self::$browser->setName(Browser::MSN);
-                    if (isset($aresult[1])) {
-                        self::$browser->setVersion(str_replace(['(', ')', ';'], '', $aresult[1]));
-                    }
 
-                    return true;
-                }
-                $aresult = explode(' ', stristr(str_replace(';', '; ', self::$userAgentString), 'msie'));
-                self::$browser->setName(Browser::IE);
+        if (false !== stripos(self::$userAgentString, 'msie') && false === stripos(self::$userAgentString, 'opera')
+        ) {
+            // See if the browser is the odd MSN Explorer
+            if (false !== stripos(self::$userAgentString, 'msnb')) {
+                $aresult = explode(' ', stristr(str_replace(';', '; ', self::$userAgentString), 'MSN'));
+                self::$browser->setName(Browser::MSN);
                 if (isset($aresult[1])) {
                     self::$browser->setVersion(str_replace(['(', ')', ';'], '', $aresult[1]));
                 }
-                // See https://msdn.microsoft.com/en-us/library/ie/hh869301%28v=vs.85%29.aspx
-                // Might be 11, anyway !
-                if (false !== stripos(self::$userAgentString, 'trident')) {
-                    preg_match('/rv:(\d+\.\d+)/', self::$userAgentString, $matches);
-                    if (isset($matches[1])) {
-                        self::$browser->setVersion($matches[1]);
-                    }
-
-                    // At this poing in the method, we know the MSIE and Trident
-                    // strings are present in the $userAgentString. If we're in
-                    // compatibility mode, we need to determine the true version.
-                    // If the MSIE version is 7.0, we can look at the Trident
-                    // version to *approximate* the true IE version. If we don't
-                    // find a matching pair, ( e.g. MSIE 7.0 && Trident/7.0 )
-                    // we're *not* in compatibility mode and the browser really
-                    // is version 7.0.
-                    if (stripos(self::$userAgentString, 'MSIE 7.0;')) {
-                        if (stripos(self::$userAgentString, 'Trident/7.0;')) {
-                            // IE11 in compatibility mode
-                            self::$browser->setVersion('11.0');
-                            self::$browser->setIsCompatibilityMode(true);
-                        } elseif (stripos(self::$userAgentString, 'Trident/6.0;')) {
-                            // IE10 in compatibility mode
-                            self::$browser->setVersion('10.0');
-                            self::$browser->setIsCompatibilityMode(true);
-                        } elseif (stripos(self::$userAgentString, 'Trident/5.0;')) {
-                            // IE9 in compatibility mode
-                            self::$browser->setVersion('9.0');
-                            self::$browser->setIsCompatibilityMode(true);
-                        } elseif (stripos(self::$userAgentString, 'Trident/4.0;')) {
-                            // IE8 in compatibility mode
-                            self::$browser->setVersion('8.0');
-                            self::$browser->setIsCompatibilityMode(true);
-                        }
-                    }
-                }
 
                 return true;
-            } // Test for versions >= 11
-            else {
-                if (false !== stripos(self::$userAgentString, 'trident')) {
-                    self::$browser->setName(Browser::IE);
+            }
+            $aresult = explode(' ', stristr(str_replace(';', '; ', self::$userAgentString), 'msie'));
+            self::$browser->setName(Browser::IE);
+            if (isset($aresult[1])) {
+                self::$browser->setVersion(str_replace(['(', ')', ';'], '', $aresult[1]));
+            }
+            // See https://msdn.microsoft.com/en-us/library/ie/hh869301%28v=vs.85%29.aspx
+            // Might be 11, anyway !
+            if (false !== stripos(self::$userAgentString, 'trident')) {
+                preg_match('/rv:(\d+\.\d+)/', self::$userAgentString, $matches);
+                if (isset($matches[1])) {
+                    self::$browser->setVersion($matches[1]);
+                }
 
-                    preg_match('/rv:(\d+\.\d+)/', self::$userAgentString, $matches);
-                    if (isset($matches[1])) {
-                        self::$browser->setVersion($matches[1]);
-
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } // Test for Pocket IE
-                else {
-                    if (false !== stripos(self::$userAgentString, 'mspie')
-                        || false !== stripos(
-                            self::$userAgentString,
-                            'pocket'
-                        )
-                    ) {
-                        $aresult = explode(' ', stristr(self::$userAgentString, 'mspie'));
-                        self::$browser->setName(Browser::POCKET_IE);
-
-                        if (false !== stripos(self::$userAgentString, 'mspie')) {
-                            if (isset($aresult[1])) {
-                                self::$browser->setVersion($aresult[1]);
-                            }
-                        } else {
-                            $aversion = explode('/', self::$userAgentString);
-                            if (isset($aversion[1])) {
-                                self::$browser->setVersion($aversion[1]);
-                            }
-                        }
-
-                        return true;
+                // At this poing in the method, we know the MSIE and Trident
+                // strings are present in the $userAgentString. If we're in
+                // compatibility mode, we need to determine the true version.
+                // If the MSIE version is 7.0, we can look at the Trident
+                // version to *approximate* the true IE version. If we don't
+                // find a matching pair, ( e.g. MSIE 7.0 && Trident/7.0 )
+                // we're *not* in compatibility mode and the browser really
+                // is version 7.0.
+                if (stripos(self::$userAgentString, 'MSIE 7.0;')) {
+                    if (stripos(self::$userAgentString, 'Trident/7.0;')) {
+                        // IE11 in compatibility mode
+                        self::$browser->setVersion('11.0');
+                        self::$browser->setIsCompatibilityMode(true);
+                    } elseif (stripos(self::$userAgentString, 'Trident/6.0;')) {
+                        // IE10 in compatibility mode
+                        self::$browser->setVersion('10.0');
+                        self::$browser->setIsCompatibilityMode(true);
+                    } elseif (stripos(self::$userAgentString, 'Trident/5.0;')) {
+                        // IE9 in compatibility mode
+                        self::$browser->setVersion('9.0');
+                        self::$browser->setIsCompatibilityMode(true);
+                    } elseif (stripos(self::$userAgentString, 'Trident/4.0;')) {
+                        // IE8 in compatibility mode
+                        self::$browser->setVersion('8.0');
+                        self::$browser->setIsCompatibilityMode(true);
                     }
                 }
             }
+
+            return true;
+        } // Test for versions >= 11
+
+        if (false !== stripos(self::$userAgentString, 'trident')) {
+            self::$browser->setName(Browser::IE);
+
+            preg_match('/rv:(\d+\.\d+)/', self::$userAgentString, $matches);
+            if (isset($matches[1])) {
+                self::$browser->setVersion($matches[1]);
+
+                return true;
+            }
+
+            return false;
+        } // Test for Pocket IE
+
+        if (false !== stripos(self::$userAgentString, 'mspie')
+            || false !== stripos(
+                self::$userAgentString,
+                'pocket'
+            )
+        ) {
+            $aresult = explode(' ', stristr(self::$userAgentString, 'mspie'));
+            self::$browser->setName(Browser::POCKET_IE);
+
+            if (false !== stripos(self::$userAgentString, 'mspie')) {
+                if (isset($aresult[1])) {
+                    self::$browser->setVersion($aresult[1]);
+                }
+            } else {
+                $aversion = explode('/', self::$userAgentString);
+                if (isset($aversion[1])) {
+                    self::$browser->setVersion($aversion[1]);
+                }
+            }
+
+            return true;
         }
 
         return false;
@@ -335,7 +330,8 @@ class BrowserDetector implements DetectorInterface
             self::$browser->setName(Browser::OPERA_MINI);
 
             return true;
-        } elseif (false !== stripos(self::$userAgentString, 'OPiOS')) {
+        }
+        if (false !== stripos(self::$userAgentString, 'OPiOS')) {
             $aresult = explode('/', stristr(self::$userAgentString, 'OPiOS'));
             if (isset($aresult[1])) {
                 $aversion = explode(' ', $aresult[1]);
@@ -344,7 +340,8 @@ class BrowserDetector implements DetectorInterface
             self::$browser->setName(Browser::OPERA_MINI);
 
             return true;
-        } elseif (false !== stripos(self::$userAgentString, 'opera')) {
+        }
+        if (false !== stripos(self::$userAgentString, 'opera')) {
             $resultant = stristr(self::$userAgentString, 'opera');
             if (preg_match('/Version\/(1[0-2].*)$/', $resultant, $matches)) {
                 if (isset($matches[1])) {
@@ -358,12 +355,13 @@ class BrowserDetector implements DetectorInterface
                 }
             } else {
                 $aversion = explode(' ', stristr($resultant, 'opera'));
-                self::$browser->setVersion(isset($aversion[1]) ? $aversion[1] : '');
+                self::$browser->setVersion($aversion[1] ?? '');
             }
             self::$browser->setName(Browser::OPERA);
 
             return true;
-        } elseif (false !== stripos(self::$userAgentString, ' OPR/')) {
+        }
+        if (false !== stripos(self::$userAgentString, ' OPR/')) {
             self::$browser->setName(Browser::OPERA);
             if (preg_match('/OPR\/([\d\.]*)/', self::$userAgentString, $matches)) {
                 if (isset($matches[1])) {
@@ -414,7 +412,8 @@ class BrowserDetector implements DetectorInterface
             self::$browser->setName(Browser::CHROME);
 
             return true;
-        } elseif (false !== stripos(self::$userAgentString, 'CriOS')) {
+        }
+        if (false !== stripos(self::$userAgentString, 'CriOS')) {
             $aresult = explode('/', stristr(self::$userAgentString, 'CriOS'));
             if (isset($aresult[1])) {
                 $aversion = explode(' ', $aresult[1]);
@@ -464,7 +463,8 @@ class BrowserDetector implements DetectorInterface
             self::$browser->setName(Browser::EDGE);
 
             return true;
-        } elseif (false !== stripos(self::$userAgentString, 'Edg')) {
+        }
+        if (false !== stripos(self::$userAgentString, 'Edg')) {
             $version = explode('Edg/', self::$userAgentString);
             if (isset($version[1])) {
                 self::$browser->setVersion(trim($version[1]));
@@ -548,7 +548,7 @@ class BrowserDetector implements DetectorInterface
     public static function checkBrowserGaleon()
     {
         if (false !== stripos(self::$userAgentString, 'galeon')) {
-            $aresult  = explode(' ', stristr(self::$userAgentString, 'galeon'));
+            $aresult = explode(' ', stristr(self::$userAgentString, 'galeon'));
             $aversion = explode('/', $aresult[0]);
             if (isset($aversion[1])) {
                 self::$browser->setVersion($aversion[1]);
@@ -569,7 +569,7 @@ class BrowserDetector implements DetectorInterface
     public static function checkBrowserKonqueror()
     {
         if (false !== stripos(self::$userAgentString, 'Konqueror')) {
-            $aresult  = explode(' ', stristr(self::$userAgentString, 'Konqueror'));
+            $aresult = explode(' ', stristr(self::$userAgentString, 'Konqueror'));
             $aversion = explode('/', $aresult[0]);
             if (isset($aversion[1])) {
                 self::$browser->setVersion($aversion[1]);
@@ -610,8 +610,8 @@ class BrowserDetector implements DetectorInterface
     public static function checkBrowserOmniWeb()
     {
         if (false !== stripos(self::$userAgentString, 'omniweb')) {
-            $aresult  = explode('/', stristr(self::$userAgentString, 'omniweb'));
-            $aversion = explode(' ', isset($aresult[1]) ? $aresult[1] : '');
+            $aresult = explode('/', stristr(self::$userAgentString, 'omniweb'));
+            $aversion = explode(' ', $aresult[1] ?? '');
             self::$browser->setVersion($aversion[0]);
             self::$browser->setName(Browser::OMNIWEB);
 
@@ -677,7 +677,8 @@ class BrowserDetector implements DetectorInterface
             self::$browser->setName(Browser::NETSCAPE_NAVIGATOR);
 
             return true;
-        } elseif (false === stripos(self::$userAgentString, 'Firefox')
+        }
+        if (false === stripos(self::$userAgentString, 'Firefox')
             && preg_match('/Netscape6?\/([^ ]*)/i', self::$userAgentString, $matches)
         ) {
             if (isset($matches[1])) {
@@ -740,7 +741,7 @@ class BrowserDetector implements DetectorInterface
      */
     public static function checkBrowserNokia()
     {
-        if (preg_match("/Nokia([^\/]+)\/([^ SP]+)/i", self::$userAgentString, $matches)) {
+        if (preg_match('/Nokia([^\\/]+)\\/([^ SP]+)/i', self::$userAgentString, $matches)) {
             self::$browser->setVersion($matches[2]);
             if (false !== stripos(self::$userAgentString, 'Series60')
                 || str_contains(self::$userAgentString, 'S60')
@@ -764,14 +765,15 @@ class BrowserDetector implements DetectorInterface
     public static function checkBrowserFirefox()
     {
         if (false === stripos(self::$userAgentString, 'safari')) {
-            if (preg_match("/Firefox[\/ \(]([^ ;\)]+)/i", self::$userAgentString, $matches)) {
+            if (preg_match('/Firefox[\\/ \\(]([^ ;\\)]+)/i', self::$userAgentString, $matches)) {
                 if (isset($matches[1])) {
                     self::$browser->setVersion($matches[1]);
                 }
                 self::$browser->setName(Browser::FIREFOX);
 
                 return true;
-            } elseif (preg_match('/Firefox$/i', self::$userAgentString, $matches)) {
+            }
+            if (preg_match('/Firefox$/i', self::$userAgentString, $matches)) {
                 self::$browser->setVersion('');
                 self::$browser->setName(Browser::FIREFOX);
 
@@ -790,14 +792,15 @@ class BrowserDetector implements DetectorInterface
     public static function checkBrowserSeaMonkey()
     {
         if (false === stripos(self::$userAgentString, 'safari')) {
-            if (preg_match("/SeaMonkey[\/ \(]([^ ;\)]+)/i", self::$userAgentString, $matches)) {
+            if (preg_match('/SeaMonkey[\\/ \\(]([^ ;\\)]+)/i', self::$userAgentString, $matches)) {
                 if (isset($matches[1])) {
                     self::$browser->setVersion($matches[1]);
                 }
                 self::$browser->setName(Browser::SEAMONKEY);
 
                 return true;
-            } elseif (preg_match('/SeaMonkey$/i', self::$userAgentString, $matches)) {
+            }
+            if (preg_match('/SeaMonkey$/i', self::$userAgentString, $matches)) {
                 self::$browser->setVersion('');
                 self::$browser->setName(Browser::SEAMONKEY);
 
@@ -846,7 +849,8 @@ class BrowserDetector implements DetectorInterface
             self::$browser->setName(Browser::MOZILLA);
 
             return true;
-        } elseif (false !== stripos(self::$userAgentString, 'mozilla')
+        }
+        if (false !== stripos(self::$userAgentString, 'mozilla')
             && preg_match('/rv:[0-9]\.[0-9]/i', self::$userAgentString)
             && false === stripos(self::$userAgentString, 'netscape')
         ) {
@@ -855,7 +859,8 @@ class BrowserDetector implements DetectorInterface
             self::$browser->setName(Browser::MOZILLA);
 
             return true;
-        } elseif (false !== stripos(self::$userAgentString, 'mozilla')
+        }
+        if (false !== stripos(self::$userAgentString, 'mozilla')
             && preg_match('/mozilla\/([^ ]*)/i', self::$userAgentString, $matches)
             && false === stripos(self::$userAgentString, 'netscape')
         ) {
@@ -878,8 +883,8 @@ class BrowserDetector implements DetectorInterface
     public static function checkBrowserLynx()
     {
         if (false !== stripos(self::$userAgentString, 'lynx')) {
-            $aresult  = explode('/', stristr(self::$userAgentString, 'Lynx'));
-            $aversion = explode(' ', isset($aresult[1]) ? $aresult[1] : '');
+            $aresult = explode('/', stristr(self::$userAgentString, 'Lynx'));
+            $aversion = explode(' ', $aresult[1] ?? '');
             self::$browser->setVersion($aversion[0]);
             self::$browser->setName(Browser::LYNX);
 

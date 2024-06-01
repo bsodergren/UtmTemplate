@@ -1,7 +1,4 @@
 <?php
-/**
- * CWP Media tool for load flags
- */
 
 namespace UTMTemplate\Browser;
 
@@ -171,7 +168,7 @@ class OsDetector implements DetectorInterface
 
             return true;
         } // Windows Me, Windows 98, Windows 95, Windows CE
-        elseif (preg_match(
+        if (preg_match(
             '/(Windows 98; Win 9x 4\.90|Windows 98|Windows 95|Windows CE)/i',
             $userAgent->getUserAgentString(),
             $matches
@@ -293,7 +290,8 @@ class OsDetector implements DetectorInterface
             $os->setIsMobile(true);
 
             return true;
-        } elseif (false !== stripos($userAgent->getUserAgentString(), 'BB10')) {
+        }
+        if (false !== stripos($userAgent->getUserAgentString(), 'BB10')) {
             $aresult = explode('Version/10.', $userAgent->getUserAgentString());
             if (isset($aresult[1])) {
                 $aversion = explode(' ', $aresult[1]);

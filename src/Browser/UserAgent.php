@@ -1,7 +1,4 @@
 <?php
-/**
- * CWP Media tool for load flags
- */
 
 namespace UTMTemplate\Browser;
 
@@ -51,7 +48,7 @@ class UserAgent
      */
     public function createUserAgentString()
     {
-        $userAgentString = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
+        $userAgentString = $_SERVER['HTTP_USER_AGENT'] ?? null;
         $this->setUserAgentString($userAgentString);
 
         return $userAgentString;

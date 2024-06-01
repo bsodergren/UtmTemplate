@@ -2,12 +2,17 @@
 
 namespace UTMTemplate\HTML;
 
-use UTMTemplate\Template;
-use UTMTemplatec\Render;
+use UTMTemplate\Filesystem\Fileloader;
+use UTMTemplate\Render;
 
 class Elements
 {
     public static $ElementsDir = 'elements/html';
+
+    public static function url($url, $text, $class = '', $extra = '')
+    {
+        return Render::return(self::$ElementsDir.'/a', ['LINK' => $url, 'CLASS' => $class, 'EXTRA' => $extra, 'TEXT' => $text]);
+    }
 
     public static function template($template)
     {
@@ -16,26 +21,23 @@ class Elements
 
     public static function stylesheet($stylesheet)
     {
-        $stylesheet = 'css/'.$stylesheet;
-        $file = Template::$SITE_PATH.'/'.$stylesheet;
-
-        if (false == file_exists($file)) {
+        $stylesheet_link = Fileloader::getIncludeFile($stylesheet, 'css');
+        if (false === $stylesheet_link) {
             return '';
         }
 
-        return Render::return(self::$ElementsDir.'/link', ['CSS_URL' => Template::$SITE_URL.$stylesheet]);
+        return Render::return(self::$ElementsDir.'/link', ['CSS_URL' => $stylesheet_link]);
     }
 
     public static function javascript($javafile)
     {
-        $javafile = 'js/'.$javafile;
-        $file = Template::$SITE_PATH.'/'.$javafile;
+        $javafile_link = Fileloader::getIncludeFile($javafile, 'js');
 
-        if (false == file_exists($file)) {
+        if (false === $javafile_link) {
             return '';
         }
 
-        return Render::return(self::$ElementsDir.'/script', ['SCRIPT_URL' => Template::$SITE_URL.$javafile]);
+        return Render::return(self::$ElementsDir.'/script', ['SCRIPT_URL' => $javafile_link]);
     }
 
     public static function addButton($text, $type = 'button', $class = 'btn button', $extra = '', $javascript = '')
@@ -49,14 +51,24 @@ class Elements
         ]);
     }
 
-    public static function SelectOptions($array, $selected = null, $blank = null, $class = 'filter-option text-bg-primary')
+    public static function SelectOptions(
+        $array,
+        $selected = null,
+        $blank = null,
+        $class = 'filter-option text-bg-primary',
+        $disabled = null)
     {
-        $html = '';
-        $default_option = '';
-        $default = '';
-        $checked = '';
+        $disabled_style = ' style="background-color: rgba(32, 32,32, 0.5) !important;" ';
+        $selected_style = ' style="background-color: rgba(0, 0,0, 0.5)!important;" ';
 
-        if (\is_array($selected)) {
+        $html = '';
+        $option_selected = [];
+        $options = [];
+        $option_default = [];
+        $option_disabled = [];
+        $checked = false;
+
+        if (\is_array($selected) && \count($selected) > 0) {
             $matchKey = array_key_first($selected);
             $matchValue = $selected[$matchKey];
         } else {
@@ -64,9 +76,9 @@ class Elements
             $matchValue = $selected;
         }
 
-        foreach ($array as $val) {
-            $checked = '';
-
+        foreach ($array as $idx => $val) {
+            $optionDisabled = false;
+            $checked = false;
             if (\is_array($val)) {
                 $text = $val['text'];
                 $value = $val['value'];
@@ -74,22 +86,49 @@ class Elements
                 $text = $val;
                 $value = $val;
             }
+            if (null !== $disabled) {
+                if (str_contains($disabled, $value)) {
+                    $optionDisabled = true;
+                }
+            }
 
             if (null !== $matchValue) {
                 if (${$matchKey} == $matchValue) {
-                    $checked = ' selected';
+                    $checked = true;
+                    $option_selected[] = '<option class="'.$class.'" value="'.$value.'" '.$selected_style.' disabled selected>'.$text.'</option>'."\n";
+                    continue;
                 }
             }
-            $html .= '<option class="'.$class.'" value="'.$value.'" '.$checked.'>'.$text.'</option>'."\n";
-        }
-        if (null !== $blank) {
-            if ('' == $checked) {
-                $default = ' selected';
+            if (true === $optionDisabled) {
+                $option_disabled[] = '<option class="'.$class.'" value="'.$value.'" '.$disabled_style.' disabled>'.$text.'</option>'."\n";
+                continue;
             }
-            $default_option = '<option class="'.$class.'" value=""  '.$default.'>'.$blank.'</option>'."\n";
+            $options[] = '<option class="'.$class.'" value="'.$value.'">'.$text.'</option>'."\n";
         }
 
-        return $default_option.$html;
+        if (null !== $blank) {
+            if (false === $checked) {
+                // $option_default[] = '<option style="background-color: #cccccc;" disabled selected>Select An Option</option>'."\n";
+                $option_default[] = '<option class="'.$class.'" value="" disabled selected>'.$blank.'</option>'."\n";
+            }
+        }
+
+        $sep = '<option style="font-size: 1pt; background-color: #000000;" disabled>&nbsp;</option>'."\n";
+        $optionsArray[] = implode(' ', $option_default);
+        $optionsArray[] = implode(' ', $options);
+
+        $optionsArray[] = implode(' ', $option_selected);
+        $optionsArray[] = implode(' ', $option_disabled);
+        foreach ($optionsArray as $o) {
+            if ('' == $o) {
+                continue;
+            }
+            $allOptions[] = trim($o);
+        }
+
+        $html = implode($sep, $allOptions);
+
+        return $html;
     }
 
     public static function add_hidden($name, $value, $attributes = '')
