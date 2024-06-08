@@ -14,20 +14,17 @@ class Template
     use Callbacks;
     use Filters;
 
-
-    
     public const STYLESHEET_CALLBACK = '|{{(stylesheet)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}}|i';
     public const JAVASCRIPT_CALLBACK = '|{{(javascript)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}}|i';
     public const TEMPLATE_CALLBACK = '|{{(template)=([a-zA-Z-_/\.]+)\|?(.*)?}}|i';
     public const VARIABLE_CALLBACK = '|{\$([a-zA-Z_-]+)}|';
     public const LANG_CALLBACK = '|{L ([a-zA-Z_]+)}|';
-    public const JS_VAR_CALLBACK = '|!!([a-zA-Z_-]+)!!|';
+    public const JS_VAR_CALLBACK = '|{\s\$([a-zA-Z_-]+)\s}|';
     public const IF_CALLBACK = '|{if="([^"]+)"}(.*?){\/if}|misu';
     public const CSS_VAR_CALLBACK = '|\$([a-zA-Z_-]+)\$|';
     public const EXPLODE_CALLBACK = '|{replace="?([^"]+)"?}|mis';
     public const BUTTON_CALLBACK = '|{{button=([a-zA-Z_]+)\|?(.*)?}}|i';
     public const ICON_CALLBACK = '|{{icon=([a-zA-Z_]+)\|?(.*)?}}|i';
-
 
     public $html;
 
@@ -54,7 +51,6 @@ class Template
 
     public static $TemplateArray = [];
     public static $AssetsArray = [];
-    
 
     private $template_file;
     private $replacement_array = [];
@@ -94,11 +90,11 @@ class Template
             self::$AssetsArray = [
                 'MOBILE' => [
                     'PATH' => UtmDevice::$MOBILE_ASSETS_PATH,
-                    'URL' =>UtmDevice::$MOBILE_ASSETS_URL,
+                    'URL' => UtmDevice::$MOBILE_ASSETS_URL,
                 ],
                 'DESKTOP' => [
                     'PATH' => self::$ASSETS_PATH,
-                    'URL' =>self::$ASSETS_URL,
+                    'URL' => self::$ASSETS_URL,
                 ],
             ];
         } else {
