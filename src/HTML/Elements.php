@@ -56,8 +56,8 @@ class Elements
         $selected = null,
         $blank = null,
         $class = 'filter-option text-bg-primary',
-        $disabled = null)
-    {
+        $disabled = null
+    ) {
         $disabled_style = ' style="background-color: rgba(32, 32,32, 0.5) !important;" ';
         $selected_style = ' style="background-color: rgba(0, 0,0, 0.5)!important;" ';
 
@@ -156,25 +156,29 @@ class Elements
         return $html;
     }
 
-    public static function javaRefresh($url, $timeout = 0)
+    public static function javaRefresh($url, $timeout_sec = 0)
     {
         global $_REQUEST;
 
-        $html = '<script>'."\n";
+        if ($timeout_sec > 0) {
+            $timeout = $timeout_sec / 100;
 
-        if ($timeout > 0) {
-            $html .= 'setTimeout(function(){ ';
+            $p = new ProgressBar();
+            // $p->setStyle(['width' => '600px','height'=>'50px','bgBefore'=> '#FF00AA','rounded'=>true]);
+
+            $p->render();
+
+            for ($i = 0; $i < ($size = 100); ++$i) {
+                $p->setProgressBarProgress($i * 100 / $size);
+                usleep(1000000 * $timeout);
+            }
+            $p->setProgressBarProgress(100);
         }
 
-        $html .= "window.location.href = '".$url."';";
-
-        if ($timeout > 0) {
-            $timeout *= 1000;
-            $html .= '}, '.$timeout.');';
-        }
-        $html .= "\n".'</script>';
-
-        echo $html;
+        echo Render::return(
+            self::$ElementsDir.'/javascript',
+            ['javascript' => "window.location.href = '".$url."';"]
+        );
     }
 
     public static function Comment($text)
