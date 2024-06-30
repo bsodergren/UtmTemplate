@@ -91,9 +91,9 @@ class ProgressBar
         } else {
             $params['percentLeft'] = (100 - $percentDone);
         }
-        if ($text) {
-            $params['pbText'] = htmlspecialchars($text);
-        }
+        // if ($text) {
+        $params['pbText'] = htmlspecialchars($text);
+        // }
         echo Render::return(self::$progressDir.'/progressjs', $params);
         $this->flush();
     }
@@ -101,7 +101,7 @@ class ProgressBar
     public function flush()
     {
         echo str_pad('', (int) \ini_get('output_buffering'))."\n";
-        ob_end_flush();
+        @ob_end_flush();
         flush();
     }
 
