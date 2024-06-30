@@ -13,11 +13,16 @@ class ProgressBar
     public $pbarid;
     public $tbarid;
     public $textid;
+    public $params = [];
     public $decimals = 1;
     public $width = '200px';
+
     public $height = '1.3em';
+
+    public $borderRadius = '5px';
     public $textColor;
     public $bgBefore = '#43b6df';
+
     public $bgAfter = '#FEFEFE';
     public $direction = 'up';
     public $rounded = true;
@@ -28,6 +33,12 @@ class ProgressBar
         $this->pbarid = 'progress-bar';
         $this->tbarid = 'transparent-bar';
         $this->textid = 'pb_text';
+
+        $this->params['textid'] = $this->textid;
+        $this->params['pbid'] = $this->pbid;
+        $this->params['pbarid'] = $this->pbarid;
+        $this->params['tbarid'] = $this->tbarid;
+
         $this->percentDone = $percentDone;
     }
 
@@ -59,10 +70,7 @@ class ProgressBar
         $this->percentDone = (float) $this->percentDone;
         $percentDone = number_format($this->percentDone, $this->decimals, '.', '').'%';
 
-        $params['textid'] = $this->textid;
-        $params['pbid'] = $this->pbid;
-        $params['pbarid'] = $this->pbarid;
-        $params['tbarid'] = $this->tbarid;
+        $params = $this->params;
         $params['percentDone'] = $percentDone;
         $params['style'] = $this->style();
 
@@ -74,12 +82,9 @@ class ProgressBar
         $this->percentDone = $percentDone;
         $text = $text ?: number_format($this->percentDone, $this->decimals, '.', '').'%';
 
-        $params['pbarid'] = $this->pbarid;
-        $params['pbid'] = $this->pbid;
+        $params = $this->params;
         $params['percentDone'] = $percentDone;
         $params['pbDone'] = 'block';
-        $params['tbarid'] = $this->tbarid;
-        $params['textId'] = $this->textid;
 
         if (100 == $percentDone) {
             $params['pbDone'] = 'none';
@@ -103,15 +108,15 @@ class ProgressBar
     public function style()
     {
         $params =
-              [
-                  'width' => $this->width,
-                  'height' => $this->height,
-                  'bgBefore' => $this->bgBefore,
-                  'bgAfter' => $this->bgAfter,
-              ];
+            [
+                'width' => $this->width,
+                'height' => $this->height,
+                'bgBefore' => $this->bgBefore,
+                'bgAfter' => $this->bgAfter,
+            ];
 
         if (true === $this->rounded) {
-            $barParams['barRadius'] = '10px';
+            $barParams['barRadius'] = $this->borderRadius;
             $params['bar'] = Render::return(self::$progressDir.'/Bar/bar', $barParams);
             $params['bar_before'] = Render::return(self::$progressDir.'/Bar/before', $barParams);
             $params['bar_after'] = Render::return(self::$progressDir.'/Bar/after', $barParams);
