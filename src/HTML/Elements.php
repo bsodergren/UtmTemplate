@@ -11,7 +11,7 @@ class Elements
 
     public static function url($url, $text, $class = '', $extra = '')
     {
-        return Render::return(self::$ElementsDir.'/a', ['LINK' => $url, 'CLASS' => $class, 'EXTRA' => $extra, 'TEXT' => $text]);
+        return Render::return(self::$ElementsDir . '/a', ['LINK' => $url, 'CLASS' => $class, 'EXTRA' => $extra, 'TEXT' => $text]);
     }
 
     public static function template($template)
@@ -22,11 +22,12 @@ class Elements
     public static function stylesheet($stylesheet)
     {
         $stylesheet_link = Fileloader::getIncludeFile($stylesheet, 'css');
+        utmdump([$stylesheet,$stylesheet_link]);
         if (false === $stylesheet_link) {
             return '';
         }
 
-        return Render::return(self::$ElementsDir.'/link', ['CSS_URL' => $stylesheet_link]);
+        return Render::return(self::$ElementsDir . '/link', ['CSS_URL' => $stylesheet_link]);
     }
 
     public static function javascript($javafile)
@@ -37,12 +38,12 @@ class Elements
             return '';
         }
 
-        return Render::return(self::$ElementsDir.'/script', ['SCRIPT_URL' => $javafile_link]);
+        return Render::return(self::$ElementsDir . '/script', ['SCRIPT_URL' => $javafile_link]);
     }
 
     public static function addButton($text, $type = 'button', $class = 'btn button', $extra = '', $javascript = '')
     {
-        return Render::return(self::$ElementsDir.'/button', [
+        return Render::return(self::$ElementsDir . '/button', [
             'TEXT' => $text,
             'TYPE' => $type,
             'CLASS' => $class,
@@ -95,25 +96,25 @@ class Elements
             if (null !== $matchValue) {
                 if (${$matchKey} == $matchValue) {
                     $checked = true;
-                    $option_selected[] = '<option class="'.$class.'" value="'.$value.'" '.$selected_style.' disabled selected>'.$text.'</option>'."\n";
+                    $option_selected[] = '<option class="' . $class . '" value="' . $value . '" ' . $selected_style . ' disabled selected>' . $text . '</option>' . "\n";
                     continue;
                 }
             }
             if (true === $optionDisabled) {
-                $option_disabled[] = '<option class="'.$class.'" value="'.$value.'" '.$disabled_style.' disabled>'.$text.'</option>'."\n";
+                $option_disabled[] = '<option class="' . $class . '" value="' . $value . '" ' . $disabled_style . ' disabled>' . $text . '</option>' . "\n";
                 continue;
             }
-            $options[] = '<option class="'.$class.'" value="'.$value.'">'.$text.'</option>'."\n";
+            $options[] = '<option class="' . $class . '" value="' . $value . '">' . $text . '</option>' . "\n";
         }
 
         if (null !== $blank) {
             if (false === $checked) {
                 // $option_default[] = '<option style="background-color: #cccccc;" disabled selected>Select An Option</option>'."\n";
-                $option_default[] = '<option class="'.$class.'" value="" disabled selected>'.$blank.'</option>'."\n";
+                $option_default[] = '<option class="' . $class . '" value="" disabled selected>' . $blank . '</option>' . "\n";
             }
         }
 
-        $sep = '<option style="font-size: 1pt; background-color: #000000;" disabled>&nbsp;</option>'."\n";
+        $sep = '<option style="font-size: 1pt; background-color: #000000;" disabled>&nbsp;</option>' . "\n";
         $optionsArray[] = implode(' ', $option_default);
         $optionsArray[] = implode(' ', $options);
 
@@ -134,9 +135,9 @@ class Elements
     public static function add_hidden($name, $value, $attributes = '')
     {
         $html = '';
-        $html .= '<input '.$attributes.' type="hidden" name="'.$name.'"  value="'.$value.'">';
+        $html .= '<input ' . $attributes . ' type="hidden" name="' . $name . '"  value="' . $value . '">';
 
-        return $html."\n";
+        return $html . "\n";
     }
 
     public static function draw_checkbox($name, $value, $text = '')
@@ -150,39 +151,41 @@ class Elements
             $checked = 'checked';
         }
 
-        $html = '<input type="hidden" name="'.$name.'" value="0">';
-        $html .= '<input class="form-check-input" type="checkbox" name="'.$name.'" value=1 '.$checked.'>'.$text;
+        $html = '<input type="hidden" name="' . $name . '" value="0">';
+        $html .= '<input class="form-check-input" type="checkbox" name="' . $name . '" value=1 ' . $checked . '>' . $text;
 
         return $html;
     }
 
-    public static function javaRefresh($url, $timeout_sec = 0)
+    public static function javaRefresh($url, $timeout_sec = 0, $text = '')
     {
         global $_REQUEST;
 
+
         if ($timeout_sec > 0) {
+            $textLength = imagefontwidth("12") * strlen($text);
             $timeout = $timeout_sec / 100;
 
             $p = new ProgressBar();
-            // $p->setStyle(['width' => '600px','height'=>'50px','bgBefore'=> '#FF00AA','rounded'=>true]);
+            $p->setStyle(['width' => $textLength . 'px', 'rounded' => true]);
 
             $p->render();
 
             for ($i = 0; $i < ($size = 100); ++$i) {
-                $p->setProgressBarProgress($i * 100 / $size);
+                $p->setProgressBarProgress($i * 100 / $size, $text);
                 usleep(1000000 * $timeout);
             }
-            $p->setProgressBarProgress(100);
+            $p->setProgressBarProgress(100, $text);
         }
 
-        echo Render::return(
-            self::$ElementsDir.'/javascript',
-            ['javascript' => "window.location.href = '".$url."';"]
-        );
+        // echo Render::return(
+        //     self::$ElementsDir . '/javascript',
+        //     ['javascript' => "window.location.href = '" . $url . "';"]
+        // );
     }
 
     public static function Comment($text)
     {
-        return \PHP_EOL.'<!-- ---------- '.$text.' ----------- --->'.\PHP_EOL;
+        return \PHP_EOL . '<!-- ---------- ' . $text . ' ----------- --->' . \PHP_EOL;
     }
 }

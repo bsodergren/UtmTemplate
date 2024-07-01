@@ -60,8 +60,6 @@ class Fileloader
         if (null === $template) {
             $html_text = '<h1>NO TEMPLATE FOUND<br>';
             $html_text .= 'FOR <pre>'.self::$template_file.'</pre></h1> <br>';
-            utmdump([__METHOD__, $html_text]);
-
             return $html_text;
         }
         $cache_key = md5(str_replace(\DIRECTORY_SEPARATOR, '_', $template));
@@ -79,6 +77,8 @@ class Fileloader
 
     public static function getTemplateFile($template, $extension = 'HTML')
     {
+
+   
         if ('' == $extension) {
             $extension = 'html';
         }
@@ -102,18 +102,20 @@ class Fileloader
             $templateArray = Template::$TemplateArray[UtmDevice::$DEVICE];
             foreach ($templateArray as $templateDir) {
                 $temp_file = $templateDir.\DIRECTORY_SEPARATOR.$template.$extension;
-                if (!file_exists($temp_file)) {
-                    continue;
-                }
-                $template_file = $temp_file;
+                if (file_exists($temp_file)) {
+                    $template_file = $temp_file;
+                    break;
+                }           
             }
         }
-
+        
         if (null === $template_file) {
-            if (file_exists(UtmDevice::$USER_DEFAULT_TEMPLATE.'/'.$template.$extension)) {
-                $template_file = UtmDevice::$USER_DEFAULT_TEMPLATE.'/'.$template.$extension;
-            } elseif (file_exists(UtmDevice::$DEFAULT_TEMPLATE.'/'.$template.$extension)) {
-                $template_file = UtmDevice::$DEFAULT_TEMPLATE.'/'.$template.$extension;
+            $user_file = UtmDevice::$USER_DEFAULT_TEMPLATE.'/'.$template.$extension;
+            $default_file = UtmDevice::$DEFAULT_TEMPLATE.'/'.$template.$extension;
+            if (file_exists($user_file)) {
+               $template_file = $user_file;
+            } elseif (file_exists($default_file)) {
+                $template_file = $default_file;
             }
         }
 
@@ -121,7 +123,6 @@ class Fileloader
         if (null === $template_file) {
             self::$template_file = $template.$extension;
         }
-
         $template_text = self::getTemplate($template_file);
 
         UtmCache::put($cache_key.'_file', $template_file, 60);
@@ -150,6 +151,7 @@ class Fileloader
                 $filename = Template::$ASSETS_URL.'/'.$filepath;
             }
         }
+
         return $filename;
     }
 }

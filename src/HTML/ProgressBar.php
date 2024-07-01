@@ -50,6 +50,7 @@ class ProgressBar
             foreach ($options as $key => $value) {
                 if (\array_key_exists($key, $vars)) {
                     $this->{$key} = $value;
+                    $this->params[$key] = $value;
                 }
             }
         }
@@ -59,7 +60,7 @@ class ProgressBar
     {
         // print ($GLOBALS['CONTENT']);
         // $GLOBALS['CONTENT'] = '';
-        echo '<div style="width: '.$this->width.';"></div>';
+        // echo '<div style="width: '.$this->width.';"></div>';
         echo $this->getContent();
         $this->flush();
         $this->setProgressBarProgress(0);
