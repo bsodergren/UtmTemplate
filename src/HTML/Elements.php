@@ -163,11 +163,14 @@ class Elements
 
 
         if ($timeout_sec > 0) {
-            $textLength = imagefontwidth("12") * strlen($text);
             $timeout = $timeout_sec / 100;
 
             $p = new ProgressBar();
-            $p->setStyle(['width' => $textLength . 'px', 'rounded' => true]);
+            if($text != '') {
+                $textLength = imagefontwidth("12") * strlen($text);
+                $p->setStyle(['width' => $textLength . 'px', 'rounded' => true]);
+            }
+            
 
             $p->render();
 
@@ -178,10 +181,10 @@ class Elements
             $p->setProgressBarProgress(100, $text);
         }
 
-        // echo Render::return(
-        //     self::$ElementsDir . '/javascript',
-        //     ['javascript' => "window.location.href = '" . $url . "';"]
-        // );
+        echo Render::return(
+            self::$ElementsDir . '/javascript',
+            ['javascript' => "window.location.href = '" . $url . "';"]
+        );
     }
 
     public static function Comment($text)
