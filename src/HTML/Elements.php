@@ -22,7 +22,6 @@ class Elements
     public static function stylesheet($stylesheet)
     {
         $stylesheet_link = Fileloader::getIncludeFile($stylesheet, 'css');
-        utmdump([$stylesheet, $stylesheet_link]);
         if (false === $stylesheet_link) {
             return '';
         }
