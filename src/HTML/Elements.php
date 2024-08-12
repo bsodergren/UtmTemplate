@@ -184,6 +184,30 @@ class Elements
         );
     }
 
+    public static function radioButtons($label, $fieldName, $array = [], $selected = '')
+    {
+        $btn = '';
+        $idx = 0;
+        foreach ($array as $name => $value) {
+            $checked = '';
+            ++$idx;
+            if ($selected == $value['value']) {
+                $checked = ' checked';
+            }
+
+            $btn .= Render::html(self::$ElementsDir.'/radiobtn',
+                [
+                    'Name' => $fieldName,
+                    'label' => $value['name'],
+                    'Value' => $value['value'],
+                    'Id' => $fieldName.'_'.$idx,
+                    'checked' => $checked,
+                ]);
+        }
+
+        return $btn;
+    }
+
     public static function Comment($text)
     {
         return \PHP_EOL.'<!-- ---------- '.$text.' ----------- --->'.\PHP_EOL;
