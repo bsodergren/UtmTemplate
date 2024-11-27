@@ -22,7 +22,7 @@ class UtmDevice
     public static $MOBILE_ASSETS_PATH = '';
 
     public static $template_path = [
-        'APPLICATION' => 'Default',
+        // 'APPLICATION' => 'Default',
         'MOBILE' => 'Mobile',
         'DESKTOP' => 'Default',
     ];
@@ -78,7 +78,7 @@ class UtmDevice
             }
         } elseif ('Chrome' == $browser->getName()) {
             if ('Windows' == $os->getName()) {
-                return 'APPLICATION';
+                return 'DESKTOP';
             }
         } elseif ('Safari' == $browser->getName()) {
             if ('iOS' == $os->getName()) {
