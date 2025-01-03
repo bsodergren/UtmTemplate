@@ -5,9 +5,9 @@
     "license": "GPL-2.0-only",
     "require": {
         "php": ">=8.0",
-        "kub-at/php-simple-html-dom-parser": "^1.9",
-        "nette/utils": "^4.0",
-        "bsodergren/utm": "^2.0"
+        "kub-at/php-simple-html-dom-parser": "^1.9.1",
+        "nette/utils": "^4.0.5",
+        "bsodergren/utm": "^2.2.16"
     },
     "authors": [
         {
