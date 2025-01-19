@@ -56,7 +56,7 @@ class Elements
         $selected = null,
         $blank = null,
         $class = 'filter-option text-bg-primary',
-        $disabled = null
+        $disabled = null,
     ) {
         $disabled_style = ' style="background-color: rgba(32, 32,32, 0.5) !important;" ';
         $selected_style = ' style="background-color: rgba(0, 0,0, 0.5)!important;" ';
@@ -79,13 +79,19 @@ class Elements
         foreach ($array as $idx => $val) {
             $optionDisabled = false;
             $checked = false;
+
             if (\is_array($val)) {
+                if (!\array_key_exists('text', $val)) {
+                    $val['value'] = array_key_first($val);
+                    $val['text'] = $val[$val['value']];
+                }
                 $text = $val['text'];
                 $value = $val['value'];
             } else {
                 $text = $val;
                 $value = $val;
             }
+
             if (null !== $disabled) {
                 if (str_contains($disabled, $value)) {
                     $optionDisabled = true;
