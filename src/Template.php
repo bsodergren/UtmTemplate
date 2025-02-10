@@ -14,17 +14,19 @@ class Template
     use Callbacks;
     use Filters;
 
-    public const STYLESHEET_CALLBACK = '|{{(stylesheet)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}}|i';
-    public const JAVASCRIPT_CALLBACK = '|{{(javascript)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}}|i';
-    public const TEMPLATE_CALLBACK = '|{{(template)=([a-zA-Z-_/\.]+)\|?(.*)?}}|i';
-    public const VARIABLE_CALLBACK = '|{\$([a-zA-Z_-]+)}|';
-    public const LANG_CALLBACK = '|{L ([a-zA-Z_]+)}|';
-    public const JS_VAR_CALLBACK = '|{\s\$([a-zA-Z_-]+)\s}|';
-    public const IF_CALLBACK = '|{if="([^"]+)"}(.*?){\/if}|misu';
-    public const CSS_VAR_CALLBACK = '|\$([a-zA-Z_-]+)\$|';
-    public const EXPLODE_CALLBACK = '|{replace="?([^"]+)"?}|mis';
-    public const BUTTON_CALLBACK = '|{{button=([a-zA-Z_]+)\|?(.*)?}}|i';
-    public const ICON_CALLBACK = '|{{icon=([a-zA-Z_]+)\|?(.*)?}}|i';
+    private $regexStart = '|{';
+    private $regexEnd = '}|misu';
+    public const STYLESHEET_CALLBACK = '{(stylesheet)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}';
+    public const JAVASCRIPT_CALLBACK = '{(javascript)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}';
+    public const TEMPLATE_CALLBACK = '{(template)=([a-zA-Z-_/\.]+)\|?(.*)?}';
+    public const VARIABLE_CALLBACK = '\$([a-zA-Z_-]+)';
+    public const LANG_CALLBACK = 'L ([a-zA-Z_]+)';
+    public const JS_VAR_CALLBACK = '\s\$([a-zA-Z_-]+)\s';
+    public const IF_CALLBACK = 'if="([^"]+)"}(.*?){\/if';
+    public const CSS_VAR_CALLBACK = '\$([a-zA-Z_-]+)\$';
+    public const EXPLODE_CALLBACK = 'replace="?([^"]+)"?';
+    public const BUTTON_CALLBACK = '{button=([a-zA-Z_]+)\|?(.*)?}';
+    public const ICON_CALLBACK = '{icon=([a-zA-Z_]+)\|?(.*)?}';
 
     public $html;
 
@@ -212,8 +214,9 @@ class Template
                 $class = (new $parts[0]());
                 // $function = $parts[1];
             }
+            $regex = $this->regexStart . '(!)?'. \constant($pattern) . $this->regexEnd;
 
-            $html_text = preg_replace_callback(\constant($pattern), [$class, $function], $html_text);
+            $html_text = preg_replace_callback($regex, [$class, $function], $html_text);
         }
 
         return preg_replace_callback('/(##(\w+,?\w+)##)(.*)(##)/iU', [$this, 'callback_color'], $html_text);

@@ -26,16 +26,26 @@ trait Callbacks
 
     public function callback_parse_icon($matches)
     {
+        if ('!' == $matches[1]) {
+            return '';
+        }
+
         return self::Icons($matches[1], $matches);
     }
 
     public function callback_parse_button($matches)
     {
+        if ('!' == $matches[1]) {
+            return '';
+        }
         utmdump($matches);
     }
 
     public function callback_explode_callback($matches)
     {
+        if ('!' == $matches[1]) {
+            return '';
+        }
         $data = str_getcsv($matches[1], ',', "'");
 
         return str_replace($data[1], $data[2], $data[0]).$data[2];
@@ -43,6 +53,9 @@ trait Callbacks
 
     public function callback_if_statement($matches)
     {
+        if ('!' == $matches[1]) {
+            return '';
+        }
         $compare = $matches[1];
         $array = explode('=', $compare);
         $return = '';
@@ -55,6 +68,9 @@ trait Callbacks
 
     public function callback_text_variable($matches)
     {
+        if ('!' == $matches[1]) {
+            return '';
+        }
         $key = $matches[1];
         $text = $this->parse_variable($matches);
         if ($text == $key) {
@@ -66,6 +82,9 @@ trait Callbacks
 
     public function callback_parse_variable($matches)
     {
+        if ('!' == $matches[1]) {
+            return '';
+        }
         $key = $matches[1];
         $text = $this->parse_variable($matches);
         if ($text == $key) {
@@ -77,6 +96,9 @@ trait Callbacks
 
     public function callback_parse_include($matches)
     {
+        if ('!' == $matches[1]) {
+            return '';
+        }
         $method = $matches[1];
 
         return Elements::$method($matches[2]);
@@ -84,6 +106,9 @@ trait Callbacks
 
     public function parse_urllink($text)
     {
+        if ('!' == $matches[1]) {
+            return '';
+        }
         $dom = HtmlDomParser::str_get_html($text);
 
         if (false === $dom) {
@@ -107,6 +132,9 @@ trait Callbacks
 
     private function callback_badge($matches)
     {
+        if ('!' == $matches[1]) {
+            return '';
+        }
         $text = $matches[3];
         $font = '';
         $class = $matches[2];
@@ -123,6 +151,9 @@ trait Callbacks
 
     private function callback_color($matches)
     {
+        if ('!' == $matches[1]) {
+            return '';
+        }
         $text = $matches[3];
         $style = 'style="';
         if (str_contains($matches[2], ',')) {
