@@ -9,16 +9,25 @@ trait Parser
         $key = $matches[1];
 
         if (\defined($key)) {
-            return \constant($key);
-        }
-        if (\is_array($this->replacement_array)) {
+            $text = \constant($key);
+        } elseif (\is_array($this->replacement_array)) {
             if (\array_key_exists($key, $this->replacement_array)) {
-                return $this->replacement_array[$key];
+                $text = $this->replacement_array[$key];
                 //  unset($this->replacement_array[$key]);
+            }
+        } else {
+            return $key;
+        }
+
+        if (\array_key_exists(2, $matches)
+        && \array_key_exists(3, $matches)
+        ) {
+            if ('+' == $matches[2]) {
+                $text = (int) $text + (int) $matches[3];
             }
         }
 
-        return $key;
+        return $text;
     }
 
     private function parseVars($matches)
