@@ -6,6 +6,7 @@ trait Parser
 {
     private function parse_variable($matches)
     {
+        $text = '';
         $key = $matches[1];
 
         if (\defined($key)) {
