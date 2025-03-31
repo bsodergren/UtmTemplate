@@ -20,7 +20,7 @@ class Template
     public const JAVASCRIPT_CALLBACK = '|{{(javascript)=([a-zA-Z-_/\.]+)\|?([a-zA-Z=$,.\?\{\}]+)?}}|i';
     public const TEMPLATE_CALLBACK = '|{{(template)=([a-zA-Z-_/\.]+)\|?(.*)?}}|i';
     public const VARIABLE_CALLBACK = '|{\$([a-zA-Z_-]+)([-+]+)?([0-9]+)?}|';
-    public const LANG_CALLBACK = '|{L ([a-zA-Z_]+)}|';
+    public const LANG_CALLBACK = '|{L ([a-zA-Z_ .\?\!\,0-9]+)}|';
     public const JS_VAR_CALLBACK = '|{\s\$([a-zA-Z_-]+)\s}|';
     public const IF_CALLBACK = '|{if="([^"]+)"}(.*?){\/if}|misu';
     public const CSS_VAR_CALLBACK = '|\$([a-zA-Z_-]+)\$|';
