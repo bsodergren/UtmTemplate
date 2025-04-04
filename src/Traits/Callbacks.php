@@ -2,13 +2,18 @@
 
 namespace UTMTemplate\Traits;
 
+use UTMTemplate\HTML\Elements;
 use KubAT\PhpSimple\HtmlDomParser;
 use UTMTemplate\Functions\Traits\Parser;
-use UTMTemplate\HTML\Elements;
+use UTMTemplate\Traits\Callbacks\Variable;
+use UTMTemplate\Traits\Callbacks\IfStatement;
 
 trait Callbacks
 {
     use Parser;
+    use IfStatement;
+    use Variable;
+
 
     public $registered_callbacks = [
         'LANG_CALLBACK' => 'callback_text_variable',
@@ -41,39 +46,8 @@ trait Callbacks
         return str_replace($data[1], $data[2], $data[0]).$data[2];
     }
 
-    public function callback_if_statement($matches)
-    {
-        $compare = $matches[1];
-        $array = explode('=', $compare);
-        $return = '';
-        if ($array[0] == $array[1]) {
-            $return = $matches[2];
-        }
 
-        return $return;
-    }
 
-    public function callback_text_variable($matches)
-    {
-        $key = $matches[1];
-        $text = $this->parse_variable($matches);
-        if ($text == $key) {
-            return $text;
-        }
-
-        return $text;
-    }
-
-    public function callback_parse_variable($matches)
-    {
-        $key = $matches[1];
-        $text = $this->parse_variable($matches);
-        if ($text == $key) {
-            return '';
-        }
-
-        return $text;
-    }
 
     public function callback_parse_include($matches)
     {
