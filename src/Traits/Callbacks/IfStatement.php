@@ -9,15 +9,58 @@ trait IfStatement
         $return = '';
         $compare = $matches[1];
 
-        $func = function () use ($compare, $matches) {
-            $compare = "return " . $compare . ";";
-            return eval($compare);
-        };
+        switch ($compare) {
+            case str_contains($compare, ">"):
+                $array = explode('>', $compare);
 
-        if ($func() === true) {
-            return $matches[2];
+                if ($array[0] == $array[1]) {
+                    return '';
+                }
+                if ($array[0] > $array[1]) {
+                    $return = $matches[2];
+                }
+                break;
+            case str_contains($compare, "<"):
+                $array = explode('<', $compare);
+                if ($array[0] == $array[1]) {
+                    return '';
+                }
+
+
+                if ($array[0] < $array[1]) {
+                    $return = $matches[2];
+                }
+                break;
+            case str_contains($compare, "="):
+                $array = explode('=', $compare);
+
+                if ($array[0] == $array[1]) {
+                    $return = $matches[2];
+                }
+                break;
+
         }
 
-        return '';
+
+        // $array = explode('=', $compare);
+
+        // if ($array[0] == $array[1]) {
+        //     $return = $matches[2];
+        // }
+
+        return $return;
+
+
+
+        // $func = function () use ($compare, $matches) {
+        //     $compare = "return " . $compare . ";";
+        //     return eval($compare);
+        // };
+
+        // if ($func() === true) {
+        //     return $matches[2];
+        // }
+
+        // return '';
     }
 }
