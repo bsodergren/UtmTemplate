@@ -27,7 +27,7 @@ class Elements
     public static function stylesheet($stylesheet)
     {
         $stylesheet_link = Fileloader::getIncludeFile($stylesheet, 'css');
-        if (false === $stylesheet_link) {
+        if (null === $stylesheet_link) {
             return '';
         }
 
@@ -37,8 +37,7 @@ class Elements
     public static function javascript($javafile)
     {
         $javafile_link = Fileloader::getIncludeFile($javafile, 'js');
-
-        if (false === $javafile_link) {
+        if (null === $javafile_link) {
             return '';
         }
 
@@ -120,14 +119,16 @@ class Elements
                 $checked = ' checked';
             }
 
-            $btn .= Render::html(self::$ElementsDir.'/radiobtn',
+            $btn .= Render::html(
+                self::$ElementsDir.'/radiobtn',
                 [
                     'Name' => $fieldName,
                     'label' => $value['name'],
                     'Value' => $value['value'],
                     'Id' => $fieldName.'_'.$idx,
                     'checked' => $checked,
-                ]);
+                ]
+            );
         }
 
         return $btn;
