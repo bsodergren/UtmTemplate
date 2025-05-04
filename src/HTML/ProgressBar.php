@@ -27,12 +27,12 @@ class ProgressBar
     public $direction = 'up';
     public $rounded = true;
 
-    public function __construct($percentDone = 0)
+    public function __construct($barId = 'progress-bar', $percentDone = 0)
     {
-        $this->pbid = 'pb';
-        $this->pbarid = 'progress-bar';
-        $this->tbarid = 'transparent-bar';
-        $this->textid = 'pb_text';
+        $this->pbid =  $barId.'_pb';
+        $this->pbarid = $barId;
+        $this->tbarid =  $barId.'_transparent-bar';
+        $this->textid =  $barId.'_text';
 
         $this->params['textid'] = $this->textid;
         $this->params['pbid'] = $this->pbid;
