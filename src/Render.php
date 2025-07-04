@@ -1,10 +1,19 @@
 <?php
+/**
+ *
+ *   Plexweb
+ *
+ */
 
 namespace UTMTemplate;
 
 class Render
 {
-    public function __construct() {}
+    public static $TemplateObj = null;
+
+    public function __construct()
+    {
+    }
 
     public static function html($template, $replacement_array = [])
     {
@@ -28,20 +37,25 @@ class Render
 
     public static function return($template = '', $array = [], $extension = 'html')
     {
-        $template_obj = new Template();
+        if (self::$TemplateObj === null) {
+            self::$TemplateObj = new Template();
+        }
+
+        $template_obj  = self::$TemplateObj;
         $template_obj->template($template, $array, $extension);
-        $html_text = $template_obj->html;
+        $html_text     = $template_obj->html;
 
         foreach ($template_obj->registered_filters as $function => $values) {
             // if (!str_contains($pattern, '::')) {
             //     $pattern = 'self::'.$pattern;
             //     $class = $template_obj;
             // } else {
-            $parts = explode('::', $function);
+            $parts     = explode('::', $function);
             // UtmDump([$pattern,$parts,$function]);
             $html_text = \call_user_func_array(
                 [$parts[0], $parts[1]],
-                [$html_text, $values]);
+                [$html_text, $values]
+            );
 
             // $function = $parts[1];
             // }

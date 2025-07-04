@@ -3,11 +3,12 @@
 namespace UTMTemplate;
 
 use UTM\Utilities\Colors;
-use UTMTemplate\Filesystem\Fileloader;
-use UTMTemplate\Filesystem\UtmCache;
-use UTMTemplate\Functions\Functions;
-use UTMTemplate\Traits\Callbacks;
 use UTMTemplate\Traits\Filters;
+use UTMTemplate\Traits\Callbacks;
+use UTMTemplate\Functions\Functions;
+use UTMTemplate\Filesystem\UtmCache;
+use UTMTemplate\Filesystem\Fileloader;
+use Nette\StaticClass;
 
 class Template
 {
@@ -59,6 +60,8 @@ class Template
 
     private static $RenderHTML = '';
 
+    public static $Registered_Callbacks;
+
     public function __construct()
     {
         // UtmDd(__DIR__);
@@ -77,7 +80,7 @@ class Template
         if (true == self::$registeredFilters) {
             $this->registerFilter(self::$registeredFilters);
         }
-
+self::$Registered_Callbacks = $this->registered_callbacks;
         if (true == UtmDevice::$DETECT_BROWSER) {
             self::$TemplateArray = [
                 'MOBILE' => [
@@ -126,6 +129,7 @@ class Template
         } else {
             if (!\array_key_exists($constant, $this->registered_callbacks)) {
                 $this->registered_callbacks = array_merge($this->registered_callbacks, [$constant => $function]);
+                krsort($this->registered_callbacks);
             }
         }
     }
@@ -205,6 +209,9 @@ class Template
     public function parseHtml($html_text)
     {
         foreach ($this->registered_callbacks as $pattern => $function) {
+
+
+
             if (!str_contains($pattern, '::')) {
                 $pattern = 'self::'.$pattern;
                 $class = $this;
@@ -214,7 +221,6 @@ class Template
                 $class = (new $parts[0]());
                 // $function = $parts[1];
             }
-
             $html_text = preg_replace_callback(\constant($pattern), [$class, $function], $html_text);
         }
 
