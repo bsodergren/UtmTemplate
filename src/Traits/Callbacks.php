@@ -33,8 +33,11 @@ trait Callbacks
     public static function get_callback($method)
     {
         $parts            = explode('::', $method);
+        
         $key              = array_search($parts[1], self::$Registered_Callbacks);
+
         list($_, $filter) = explode('::', $key);
+
         return self::$Registered_Callbacks[$filter];
         //utmdump(Template::$Registered_Callbacks[$filter]);
         //;
