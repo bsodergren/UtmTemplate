@@ -3,12 +3,11 @@
 namespace UTMTemplate;
 
 use UTM\Utilities\Colors;
-use UTMTemplate\Traits\Filters;
-use UTMTemplate\Traits\Callbacks;
-use UTMTemplate\Functions\Functions;
-use UTMTemplate\Filesystem\UtmCache;
 use UTMTemplate\Filesystem\Fileloader;
-use Nette\StaticClass;
+use UTMTemplate\Filesystem\UtmCache;
+use UTMTemplate\Functions\Functions;
+use UTMTemplate\Traits\Callbacks;
+use UTMTemplate\Traits\Filters;
 
 class Template
 {
@@ -80,7 +79,7 @@ class Template
         if (true == self::$registeredFilters) {
             $this->registerFilter(self::$registeredFilters);
         }
-self::$Registered_Callbacks = $this->registered_callbacks;
+        self::$Registered_Callbacks = $this->registered_callbacks;
         if (true == UtmDevice::$DETECT_BROWSER) {
             self::$TemplateArray = [
                 'MOBILE' => [
@@ -129,7 +128,6 @@ self::$Registered_Callbacks = $this->registered_callbacks;
         } else {
             if (!\array_key_exists($constant, $this->registered_callbacks)) {
                 $this->registered_callbacks = array_merge($this->registered_callbacks, [$constant => $function]);
-                krsort($this->registered_callbacks);
             }
         }
     }
@@ -209,9 +207,6 @@ self::$Registered_Callbacks = $this->registered_callbacks;
     public function parseHtml($html_text)
     {
         foreach ($this->registered_callbacks as $pattern => $function) {
-
-
-
             if (!str_contains($pattern, '::')) {
                 $pattern = 'self::'.$pattern;
                 $class = $this;
