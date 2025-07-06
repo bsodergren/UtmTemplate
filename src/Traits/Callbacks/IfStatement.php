@@ -1,9 +1,4 @@
 <?php
-/**
- *
- *   Plexweb
- *
- */
 
 namespace UTMTemplate\Traits\Callbacks;
 
@@ -11,43 +6,46 @@ trait IfStatement
 {
     public function callback_if_statement($matches)
     {
-        $return  = '';
+        $return = false;
         $compare = $matches[1];
+
+        utmdump($matches);
         switch ($compare) {
-            case str_contains($compare, ">"):
+            case str_contains($compare, '>'):
                 $array = explode('>', $compare);
 
                 if ($array[0] == $array[1]) {
-                    return '';
+                    return false;
                 }
                 if ($array[0] > $array[1]) {
-                    $return = $matches[2];
+                    return $matches[2];
                 }
-                break;
-            case str_contains($compare, "<"):
+
+                return '';
+
+            case str_contains($compare, '<'):
                 $array = explode('<', $compare);
                 if ($array[0] == $array[1]) {
-                    return '';
+                    return false;
                 }
-
 
                 if ($array[0] < $array[1]) {
-                    $return = $matches[2];
+                    return $matches[2];
                 }
-                break;
-            case str_contains($compare, "="):
+
+                return '';
+
+            case str_contains($compare, '='):
                 $array = explode('=', $compare);
-
                 if ($array[0] == $array[1]) {
-                    $return = $matches[2];
+                    return $matches[2];
                 }
-                break;
+
+                return '';
         }
 
-        if ($return == "") {
-            $return        = $matches[0];
-        }
+        return $matches[0];
 
-        return $return;
+        // return $return;
     }
 }
