@@ -8,8 +8,6 @@ trait IfStatement
     {
         $return = false;
         $compare = $matches[1];
-
-        utmdump($matches);
         switch ($compare) {
             case str_contains($compare, '>'):
                 $array = explode('>', $compare);
