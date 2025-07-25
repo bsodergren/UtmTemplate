@@ -1,49 +1,79 @@
 <?php
 
+/**
+ *
+ *   Plexweb
+ *
+ */
+
 namespace UTMTemplate\Traits\Callbacks;
 
 trait IfStatement
 {
     public function callback_if_statement($matches)
     {
-        $return = false;
-        $compare = $matches[1];
-        switch ($compare) {
-            case str_contains($compare, '>'):
-                $array = explode('>', $compare);
+        $return   = false;//  $matches[0];
 
-                if ($array[0] == $array[1]) {
-                    return false;
-                }
-                if ($array[0] > $array[1]) {
-                    return $matches[2];
-                }
+        $compare  = $matches[1];
+        preg_match('/([\w\s]+)?(\=|<|>)([\w\s]+)/', $compare, $output_array);
 
-                return '';
 
-            case str_contains($compare, '<'):
-                $array = explode('<', $compare);
-                if ($array[0] == $array[1]) {
-                    return false;
-                }
+        $first    = $output_array[1];
+        $second   = $output_array[3];
+        $operator = $output_array[2];
 
-                if ($array[0] < $array[1]) {
-                    return $matches[2];
-                }
+        if ($operator == '=') {
 
-                return '';
+            if ($first == '') {
+                $first = false;
+            }
 
-            case str_contains($compare, '='):
-                $array = explode('=', $compare);
-                if ($array[0] == $array[1]) {
-                    return $matches[2];
-                }
+            switch ($second) {
+                case "true":
+                    if ($first == true) {
+                        $return = $matches[2];
+                    } else {
+                        $return = false;
+                    }
+                    break;
 
-                return '';
+                case "false":
+                    if ($first == false) {
+                        $return = $matches[2];
+                    } else {
+                        $return = false;
+                    }
+                    break;
+                default:
+                    if ($first == $second) {
+                        $return = $matches[2];
+                    } else {
+                        $return = false;
+                    }
+
+            }
         }
 
-        return $matches[0];
+        if ($first == '') {
+            $return = false;
+        }
+        if ($operator == '<') {
+            if ($first <= $second) {
+                $return = $matches[2];
+            } else {
+                $return = false;
+            }
+        }
 
-        // return $return;
+        if ($operator == '>') {
+            if ($first > $second) {
+                $return = $matches[2];
+            } else {
+                $return = false;
+            }
+        }
+
+        return $return;
+
     }
 }
