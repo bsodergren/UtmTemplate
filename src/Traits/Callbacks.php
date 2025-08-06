@@ -20,8 +20,8 @@ trait Callbacks
         'VARIABLE_CALLBACK' => 'callback_parse_variable',
         'JS_VAR_CALLBACK' => 'callback_parse_variable',
         'CSS_VAR_CALLBACK' => 'callback_parse_variable',
-        'STYLESHEET_CALLBACK' => 'callback_parse_include',
-        'JAVASCRIPT_CALLBACK' => 'callback_parse_include',
+        'STYLESHEET_CALLBACK' => 'callback_parse_source_include',
+        'JAVASCRIPT_CALLBACK' => 'callback_parse_source_include',
         'TEMPLATE_CALLBACK' => 'callback_parse_include',
         'IF_CALLBACK' => 'callback_if_statement',
         'EXPLODE_CALLBACK' => 'callback_explode_callback',
@@ -62,6 +62,16 @@ trait Callbacks
 
 
 
+ public function callback_parse_source_include($matches)
+    {
+           if ($matches[1] == "!") {
+            return "";
+        }
+        
+        $method = $matches[2];
+
+        return Elements::$method($matches[3]);
+    }
 
     public function callback_parse_include($matches)
     {
