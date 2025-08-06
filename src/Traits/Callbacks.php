@@ -2,26 +2,25 @@
 
 namespace UTMTemplate\Traits;
 
-use UTMTemplate\HTML\Elements;
 use KubAT\PhpSimple\HtmlDomParser;
 use UTMTemplate\Functions\Traits\Parser;
-use UTMTemplate\Traits\Callbacks\Variable;
+use UTMTemplate\HTML\Elements;
 use UTMTemplate\Traits\Callbacks\IfStatement;
+use UTMTemplate\Traits\Callbacks\Variable;
 
 trait Callbacks
 {
-    use Parser;
     use IfStatement;
+    use Parser;
     use Variable;
-
 
     public $registered_callbacks = [
         'LANG_CALLBACK' => 'callback_text_variable',
         'VARIABLE_CALLBACK' => 'callback_parse_variable',
         'JS_VAR_CALLBACK' => 'callback_parse_variable',
         'CSS_VAR_CALLBACK' => 'callback_parse_variable',
-        'STYLESHEET_CALLBACK' => 'callback_parse_source_include',
-        'JAVASCRIPT_CALLBACK' => 'callback_parse_source_include',
+        'STYLESHEET_CALLBACK' => 'callback_parse_include',
+        'JAVASCRIPT_CALLBACK' => 'callback_parse_include',
         'TEMPLATE_CALLBACK' => 'callback_parse_include',
         'IF_CALLBACK' => 'callback_if_statement',
         'EXPLODE_CALLBACK' => 'callback_explode_callback',
@@ -29,18 +28,17 @@ trait Callbacks
         'ICON_CALLBACK' => 'callback_parse_icon',
     ];
 
-    
     public static function get_callback($method)
     {
-        $parts            = explode('::', $method);
-        
-        $key              = array_search($parts[1], self::$Registered_Callbacks);
+        $parts = explode('::', $method);
 
-        list($_, $filter) = explode('::', $key);
+        $key = array_search($parts[1], self::$Registered_Callbacks);
+
+        [$_, $filter] = explode('::', $key);
 
         return self::$Registered_Callbacks[$filter];
-        //utmdump(Template::$Registered_Callbacks[$filter]);
-        //;
+        // utmdump(Template::$Registered_Callbacks[$filter]);
+        // ;
     }
 
     public function callback_parse_icon($matches)
@@ -60,14 +58,12 @@ trait Callbacks
         return str_replace($data[1], $data[2], $data[0]).$data[2];
     }
 
-
-
- public function callback_parse_source_include($matches)
+    public function callback_parse_source_include($matches)
     {
-           if ($matches[1] == "!") {
-            return "";
+        if ('!' == $matches[1]) {
+            return '';
         }
-        
+
         $method = $matches[2];
 
         return Elements::$method($matches[3]);
@@ -75,9 +71,12 @@ trait Callbacks
 
     public function callback_parse_include($matches)
     {
-        $method = $matches[1];
+        if ('!' == $matches[1]) {
+            return '';
+        }
+        $method = $matches[2];
 
-        return Elements::$method($matches[2]);
+        return Elements::$method($matches[3]);
     }
 
     public function parse_urllink($text)

@@ -16,9 +16,9 @@ class Template
 
     // private $regexStart = '|{';
     // private $regexEnd = '}|misu';
-    public const STYLESHEET_CALLBACK = '|{{(!)?(stylesheet)="?([a-zA-Z0-9-_/\.\:]+)\|?([\:\/a-zA-Z=$,.\?\{\}]+)?"?}}|i';
-    public const JAVASCRIPT_CALLBACK = '|{{(!)?(javascript)="?([a-zA-Z0-9-_/\.\:]+)\|?([\:\/a-zA-Z=$,.\?\{\}]+)?"?}}|i';
-    public const TEMPLATE_CALLBACK = '|{{(template)=([a-zA-Z-_/\.]+)\|?(.*)?}}|i';
+    public const STYLESHEET_CALLBACK = '|{{(!)?(stylesheet)="?([\@a-zA-Z0-9-_/\.\:]+)\|?([\:\@\/0-9a-zA-Z=$,.\?\{\}]+)?"?}}|i';
+    public const JAVASCRIPT_CALLBACK = '|{{(!)?(javascript)="?([\@a-zA-Z0-9-_/\.\:]+)\|?([\@\:\/0-9a-zA-Z=$,.\?\{\}]+)?"?}}|i';
+    public const TEMPLATE_CALLBACK = '|{{(!)?(template)=([a-zA-Z-_/\.]+)\|?(.*)?}}|i';
     public const VARIABLE_CALLBACK = '|{\$([a-zA-Z_-]+)([-+]+)?([0-9]+)?}|';
     public const LANG_CALLBACK = '|{L ([a-zA-Z_ .\?\!\,0-9]+)}|';
     public const JS_VAR_CALLBACK = '|{\s\$([a-zA-Z_-]+)\s}|';
