@@ -63,9 +63,9 @@ class Template
 
     public function __construct()
     {
-        // UtmDd(__DIR__);
+        //  UtmDump(__THIS_PAGE__);
 
-        ob_implicit_flush(true);
+        ob_implicit_flush(1);
         @ob_end_flush();
 
         $flushdummy = '';
@@ -73,12 +73,15 @@ class Template
             $flushdummy .= '      ';
         }
         self::$flushdummy = $flushdummy;
+
         if (true == self::$registeredCallbacks) {
             $this->registerCallback(self::$registeredCallbacks);
         }
+
         if (true == self::$registeredFilters) {
             $this->registerFilter(self::$registeredFilters);
         }
+
         self::$Registered_Callbacks = $this->registered_callbacks;
         if (true == UtmDevice::$DETECT_BROWSER) {
             self::$TemplateArray = [
@@ -126,7 +129,17 @@ class Template
                 $this->registerCallback($key, $value);
             }
         } else {
-            if (!\array_key_exists($constant, $this->registered_callbacks)) {
+            if (str_contains($constant, '::')) {
+                $item = explode('::', $constant);
+                $contant_key = $item[1];
+            } else {
+                $contant_key = $constant;
+            }
+
+            if (!\array_key_exists($contant_key, $this->registered_callbacks)) {
+                $this->registered_callbacks = array_merge($this->registered_callbacks, [$constant => $function]);
+            } else {
+                unset($this->registered_callbacks[$contant_key]);
                 $this->registered_callbacks = array_merge($this->registered_callbacks, [$constant => $function]);
             }
         }
@@ -199,7 +212,7 @@ class Template
 
     public static function push($contents)
     {
-        echo $contents; // , self::$flushdummy;
+        echo $contents, self::$flushdummy;
         flush();
         @ob_flush();
     }
