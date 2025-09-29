@@ -28,6 +28,15 @@ trait Parser
             }
         }
 
+        if (\array_key_exists(4, $matches)) {
+            if (\array_key_exists($key, $GLOBALS)) {
+                $globalArray = $GLOBALS[$key];
+                if (\array_key_exists($matches[5], $globalArray)) {
+                    $text = $globalArray[$matches[5]];
+                }
+            }
+        }
+
         return $text;
     }
 
