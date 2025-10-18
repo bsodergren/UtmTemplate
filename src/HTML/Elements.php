@@ -26,28 +26,28 @@ class Elements
 
     public static function stylesheet($stylesheet)
     {
-        if(str_starts_with($stylesheet,"http")){
-              $stylesheet_link = $stylesheet;
+        if (str_starts_with($stylesheet, 'http')) {
+            $stylesheet_link = $stylesheet;
         } else {
-        $stylesheet_link = Fileloader::getIncludeFile($stylesheet, 'css');
-        if (null === $stylesheet_link) {
-            return '';
+            $stylesheet_link = Fileloader::getIncludeFile($stylesheet, 'css');
+            if (null === $stylesheet_link) {
+                return '';
+            }
         }
-    }
 
         return Render::return(self::$ElementsDir.'/link', ['CSS_URL' => $stylesheet_link]);
     }
 
     public static function javascript($javafile)
     {
-         if(str_starts_with($javafile,"http")){
-              $javafile_link = $javafile;
+        if (str_starts_with($javafile, 'http')) {
+            $javafile_link = $javafile;
         } else {
-        $javafile_link = Fileloader::getIncludeFile($javafile, 'js');
-        if (null === $javafile_link) {
-            return '';
+            $javafile_link = Fileloader::getIncludeFile($javafile, 'js');
+            if (null === $javafile_link) {
+                return '';
+            }
         }
-    }
 
         return Render::return(self::$ElementsDir.'/script', ['SCRIPT_URL' => $javafile_link]);
     }
