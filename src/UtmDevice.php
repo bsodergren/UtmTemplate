@@ -123,4 +123,9 @@ class UtmDevice
 
         return $html;
     }
+
+    public static function IsMobile()
+    {
+        return 'MOBILE' === self::$DEVICE;
+    }
 }
