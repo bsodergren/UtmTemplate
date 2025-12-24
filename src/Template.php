@@ -17,44 +17,69 @@ class Template
     // private $regexStart = '|{';
     // private $regexEnd = '}|misu';
     public const STYLESHEET_CALLBACK = '|{{(!)?(stylesheet)="?([\@a-zA-Z0-9-_/\.\:]+)\|?([\:\@\/0-9a-zA-Z=$,.\?\{\}]+)?"?}}|i';
+
     public const JAVASCRIPT_CALLBACK = '|{{(!)?(javascript)="?([\@a-zA-Z0-9-_/\.\:]+)\|?([\@\:\/0-9a-zA-Z=$,.\?\{\}]+)?"?}}|i';
+
     public const TEMPLATE_CALLBACK = '|{{(!)?(template)=([a-zA-Z-_/\.]+)\|?(.*)?}}|i';
-    public const VARIABLE_CALLBACK = '|{\$([a-zA-Z_-]+)([-+]+)?([0-9]+)?(\['."'?([a-zA-Z_]+)'?".'\])?}|';
+
+    public const VARIABLE_CALLBACK = '|{\$([a-zA-Z_-]+)([-+]+)?([0-9]+)?(\[' . "'?([a-zA-Z_]+)'?" . '\])?}|';
+
     public const LANG_CALLBACK = '|{L ([a-zA-Z_ .\?\!\,0-9]+)}|';
+
     public const JS_VAR_CALLBACK = '|{\s\$([a-zA-Z_-]+)\s}|';
+
     public const IF_CALLBACK = '|{if="([^"]+)"}(.*?){\/if}|misu';
+
     public const CSS_VAR_CALLBACK = '|\$([a-zA-Z_-]+)\$|';
+
     public const EXPLODE_CALLBACK = '|{replace="?([^"]+)"?}|mis';
+
     public const BUTTON_CALLBACK = '|{{button=([a-zA-Z_]+)\|?(.*)?}}|i';
+
     public const ICON_CALLBACK = '|{{icon=([a-zA-Z_]+)\|?(.*)?}}|i';
 
     public $html;
 
     public static $Render = false;
+
     public static $registeredCallbacks = false;
+
     public static $registeredFilters = false;
 
     public static $flushdummy;
+
     public static $BarStarted = false;
+
     public static $BarHeight = 30;
+
     public static $params = [];
-    public static $TEMPLATE_DIR = __DIR__.'/Templates/Default';
+
+    public static $TEMPLATE_DIR = __DIR__ . '/Templates/Default';
+
     public static $USER_TEMPLATE_DIR = '';
+
     public static $THEME_DIR = '';
+
     public static $TEMPLATE_COMMENTS = true;
 
     public static $CACHE_DIR = false;
+
     public static $USE_TEMPLATE_CACHE = false;
+
     public static $SITE_URL = '';
+
     public static $SITE_PATH = '';
 
     public static $ASSETS_URL = '';
+
     public static $ASSETS_PATH = '';
 
     public static $TemplateArray = [];
+
     public static $AssetsArray = [];
 
     private $template_file;
+
     private $replacement_array = [];
 
     private static $RenderHTML = '';
@@ -69,23 +94,23 @@ class Template
         @ob_end_flush();
 
         $flushdummy = '';
-        for ($i = 0; $i < 1200; ++$i) {
+        for ($i = 0; $i < 1200; $i++) {
             $flushdummy .= '      ';
         }
         self::$flushdummy = $flushdummy;
 
-        if (true == self::$registeredCallbacks) {
+        if (self::$registeredCallbacks == true) {
             $this->registerCallback(self::$registeredCallbacks);
         }
 
-        if (true == self::$registeredFilters) {
+        if (self::$registeredFilters == true) {
             $this->registerFilter(self::$registeredFilters);
         }
 
         self::$Registered_Callbacks = $this->registered_callbacks;
-        if (true == UtmDevice::$DETECT_BROWSER) {
+        if (UtmDevice::$DETECT_BROWSER == true) {
             self::$TemplateArray = [
-                'MOBILE' => [
+                'MOBILE'  => [
                     UtmDevice::$USER_MOBILE_TEMPLATE,
                     UtmDevice::$MOBILE_TEMPLATE,
                 ],
@@ -95,13 +120,13 @@ class Template
                 ],
             ];
             self::$AssetsArray = [
-                'MOBILE' => [
+                'MOBILE'  => [
                     'PATH' => UtmDevice::$MOBILE_ASSETS_PATH,
-                    'URL' => UtmDevice::$MOBILE_ASSETS_URL,
+                    'URL'  => UtmDevice::$MOBILE_ASSETS_URL,
                 ],
                 'DESKTOP' => [
                     'PATH' => self::$ASSETS_PATH,
-                    'URL' => self::$ASSETS_URL,
+                    'URL'  => self::$ASSETS_URL,
                 ],
             ];
         } else {
@@ -114,7 +139,7 @@ class Template
             self::$AssetsArray = [
                 'DESKTOP' => [
                     'PATH' => self::$ASSETS_PATH,
-                    'URL' => self::$ASSETS_URL,
+                    'URL'  => self::$ASSETS_URL,
                 ],
             ];
         }
@@ -130,13 +155,13 @@ class Template
             }
         } else {
             if (str_contains($constant, '::')) {
-                $item = explode('::', $constant);
+                $item        = explode('::', $constant);
                 $contant_key = $item[1];
             } else {
                 $contant_key = $constant;
             }
 
-            if (!\array_key_exists($contant_key, $this->registered_callbacks)) {
+            if (! \array_key_exists($contant_key, $this->registered_callbacks)) {
                 $this->registered_callbacks = array_merge($this->registered_callbacks, [$constant => $function]);
             } else {
                 unset($this->registered_callbacks[$contant_key]);
@@ -152,7 +177,7 @@ class Template
                 $this->registerFilter($key, $value);
             }
         } else {
-            if (!\array_key_exists($constant, $this->registered_filters)) {
+            if (! \array_key_exists($constant, $this->registered_filters)) {
                 $this->registered_filters = array_merge($this->registered_filters, [$constant => $function]);
             }
         }
@@ -166,12 +191,12 @@ class Template
             $args = $arguments[1];
         }
 
-        return (new Functions())->{$icon}($args);
+        return (new Functions)->{$icon}($args);
     }
 
     public static function ProgressBar($timeout = 5, $name = 'theBar')
     {
-        if ('start' == strtolower($timeout)) {
+        if (strtolower($timeout) == 'start') {
             self::$BarStarted = true;
             self::pushhtml('progress_bar', ['NAME' => $name, 'BAR_HEIGHT' => self::$BarHeight]);
 
@@ -181,7 +206,7 @@ class Template
         if ($timeout > 0) {
             $timeout *= 1000;
             $update_inv = $timeout / 100;
-            if (false == self::$BarStarted) {
+            if (self::$BarStarted == false) {
                 self::pushhtml('progress_bar', ['NAME' => $name, 'BAR_HEIGHT' => self::$BarHeight]);
                 self::$BarStarted = false;
             }
@@ -199,15 +224,15 @@ class Template
     public static function put($contents, $color = null, $break = true)
     {
         $nlbr = '';
-        if (null !== $color) {
-            $colorObj = new Colors();
+        if ($color !== null) {
+            $colorObj = new Colors;
             //    $contents = $colorObj->getColoredSpan($contents, $color);
         }
-        if (true == $break) {
+        if ($break == true) {
             $nlbr = '<br>';
         }
         // echo $contents;
-        self::push($contents.'  '.$nlbr);
+        self::push($contents . '  ' . $nlbr);
     }
 
     public static function push($contents)
@@ -220,13 +245,13 @@ class Template
     public function parseHtml($html_text)
     {
         foreach ($this->registered_callbacks as $pattern => $function) {
-            if (!str_contains($pattern, '::')) {
-                $pattern = 'self::'.$pattern;
-                $class = $this;
+            if (! str_contains($pattern, '::')) {
+                $pattern = 'self::' . $pattern;
+                $class   = $this;
             } else {
                 $parts = explode('::', $pattern);
                 // UtmDump([$pattern,$parts,$function]);
-                $class = (new $parts[0]());
+                $class = (new $parts[0]);
                 // $function = $parts[1];
             }
             $html_text = preg_replace_callback(\constant($pattern), [$class, $function], $html_text);
@@ -245,25 +270,25 @@ class Template
         $html_text = Fileloader::getTemplateFile($template, $extension);
 
         $replacement_array['self'] = str_replace(\dirname(__DIR__, 4), '', Fileloader::$template_file);
-        $replacement_array = array_merge($replacement_array, self::$params);
-        $this->replacement_array = $replacement_array;
-        if ('html' == $extension && true == self::$TEMPLATE_COMMENTS) {
-            $_text = '<!-- {$self} --> '.\PHP_EOL;
-            $_text .= trim($html_text).\PHP_EOL;
-            $_text .= '<!-- end {$self} -->'.\PHP_EOL;
+        $replacement_array         = array_merge($replacement_array, self::$params);
+        $this->replacement_array   = $replacement_array;
+        if ($extension == 'html' && self::$TEMPLATE_COMMENTS == true) {
+            $_text = '<!-- {$self} --> ' . \PHP_EOL;
+            $_text .= trim($html_text) . \PHP_EOL;
+            $_text .= '<!-- end {$self} -->' . \PHP_EOL;
             $html_text = $_text;
             unset($_text);
         }
 
         $html_text = $this->parseHtml($html_text);
 
-        if ('js' == $extension) {
-            $html_text = '<script>'.\PHP_EOL.$html_text.\PHP_EOL.'</script>';
+        if ($extension == 'js') {
+            $html_text = '<script>' . \PHP_EOL . $html_text . \PHP_EOL . '</script>';
         }
-        if ('css' == $extension) {
-            $html_text = '<style>'.\PHP_EOL.$html_text.\PHP_EOL.'</style>';
+        if ($extension == 'css') {
+            $html_text = '<style>' . \PHP_EOL . $html_text . \PHP_EOL . '</style>';
         }
-        $html_text = trim($html_text).\PHP_EOL;
+        $html_text = trim($html_text) . \PHP_EOL;
 
         $this->html = $html_text;
 

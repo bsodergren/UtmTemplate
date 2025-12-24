@@ -9,7 +9,7 @@ use UTMTemplate\Browser\Os;
 class UtmDevice
 {
     public static $DEVICE = 'DESKTOP';
-    public static $DETECT_BROWSER = false;
+    public static $DETECT_BROWSER = true;
     public static $MOBILE_DEVICE = false;
 
     public static $MOBILE_TEMPLATE = false;
