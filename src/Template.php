@@ -58,6 +58,8 @@ class Template
 
     public static $USER_TEMPLATE_DIR = '';
 
+    public static $USER_MOBILE_TEMPLATE = '';
+
     public static $THEME_DIR = '';
 
     public static $TEMPLATE_COMMENTS = true;
@@ -73,6 +75,10 @@ class Template
     public static $ASSETS_URL = '';
 
     public static $ASSETS_PATH = '';
+
+    public static $MOBILE_ASSETS_PATH = '';
+
+    public static $MOBILE_ASSETS_URL = '';
 
     public static $TemplateArray = [];
 
@@ -111,18 +117,18 @@ class Template
         if (UtmDevice::$DETECT_BROWSER == true) {
             self::$TemplateArray = [
                 'MOBILE'  => [
-                    UtmDevice::$USER_MOBILE_TEMPLATE,
-                    UtmDevice::$MOBILE_TEMPLATE,
+                    self::$USER_MOBILE_TEMPLATE,
+                    self::$TEMPLATE_DIR,
                 ],
                 'DESKTOP' => [
-                    UtmDevice::$USER_DEFAULT_TEMPLATE,
-                    UtmDevice::$DEFAULT_TEMPLATE,
+                    self::$USER_TEMPLATE_DIR,
+                    self::$TEMPLATE_DIR,
                 ],
             ];
             self::$AssetsArray = [
                 'MOBILE'  => [
-                    'PATH' => UtmDevice::$MOBILE_ASSETS_PATH,
-                    'URL'  => UtmDevice::$MOBILE_ASSETS_URL,
+                    'PATH' => self::$MOBILE_ASSETS_PATH,
+                    'URL'  => self::$MOBILE_ASSETS_URL,
                 ],
                 'DESKTOP' => [
                     'PATH' => self::$ASSETS_PATH,

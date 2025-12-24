@@ -142,7 +142,6 @@ class Fileloader
                 $filename = $asset['URL'] . '/' . $filepath;
             }
         }
-
         if ($filename === null) {
             $file = Template::$ASSETS_PATH . \DIRECTORY_SEPARATOR . $filepath;
             if (file_exists($file)) {
