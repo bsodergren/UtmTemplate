@@ -78,7 +78,6 @@ class Template
     public static $ASSETS_PATH = '';
 
     public static $MOBILE_ASSETS_PATH = '';
-    public static $USER_DEFAULT_TEMPLATE = '';
 
     public static $MOBILE_ASSETS_URL = '';
 
