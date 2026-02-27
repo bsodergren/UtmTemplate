@@ -57,6 +57,7 @@ class Template
     public static $TEMPLATE_DIR = __DIR__.'/Templates/Default';
 
     public static $USER_TEMPLATE_DIR = '';
+    public static $USER_DEFAULT_TEMPLATE = '';
 
     public static $USER_MOBILE_TEMPLATE = '';
 
