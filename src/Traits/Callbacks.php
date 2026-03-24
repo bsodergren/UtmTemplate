@@ -5,6 +5,7 @@ namespace UTMTemplate\Traits;
 use KubAT\PhpSimple\HtmlDomParser;
 use UTMTemplate\Functions\Traits\Parser;
 use UTMTemplate\HTML\Elements;
+use UTMTemplate\Render;
 use UTMTemplate\Traits\Callbacks\IfStatement;
 use UTMTemplate\Traits\Callbacks\Variable;
 
@@ -21,7 +22,7 @@ trait Callbacks
         'CSS_VAR_CALLBACK' => 'callback_parse_variable',
         'STYLESHEET_CALLBACK' => 'callback_parse_include',
         'JAVASCRIPT_CALLBACK' => 'callback_parse_include',
-        'TEMPLATE_CALLBACK' => 'callback_parse_include',
+        'TEMPLATE_CALLBACK' => 'callback_parse_template',
         'IF_CALLBACK' => 'callback_if_statement',
         'EXPLODE_CALLBACK' => 'callback_explode_callback',
         'BUTTON_CALLBACK' => 'callback_parse_button',
@@ -77,6 +78,31 @@ trait Callbacks
         $method = $matches[2];
 
         return Elements::$method($matches[3]);
+    }
+
+    public function callback_parse_template($matches)
+    {
+        $ext = 'html';
+        $param_array = [];
+        if ('!' == $matches[1]) {
+            return '';
+        }
+
+        $template = $matches[3];
+
+        if ('' != $matches[4]) {
+            $params = explode('&', $matches[4]);
+            foreach ($params as $values) {
+                $array = explode('=', $values);
+                if ('ext' == $array[0]) {
+                    $ext = $array[1];
+                    continue;
+                }
+                $param_array[$array[0]] = $array[1];
+            }
+        }
+
+        return Render::return($template, $param_array, $ext);
     }
 
     public function parse_urllink($text)

@@ -2,3 +2,5 @@
 composer.lock
 Test/.env-server
 current
+Test/*
+utm/var/*

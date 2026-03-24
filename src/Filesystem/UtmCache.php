@@ -8,6 +8,7 @@ use UTMTemplate\Template;
 class UtmCache
 {
     public static $stash;
+    public static $expire = 900;
 
     public static function init()
     {
@@ -36,6 +37,6 @@ class UtmCache
             return false;
         }
 
-        return self::$stash->put($key, $value);
+        return self::$stash->put($key, $value, self::$expire);
     }
 }

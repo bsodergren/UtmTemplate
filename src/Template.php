@@ -16,11 +16,12 @@ class Template
 
     // private $regexStart = '|{';
     // private $regexEnd = '}|misu';
+
     public const STYLESHEET_CALLBACK = '|{{(!)?(stylesheet)="?([\@a-zA-Z0-9-_/\.\:]+)\|?([\:\@\/0-9a-zA-Z=$,.\?\{\}]+)?"?}}|i';
 
     public const JAVASCRIPT_CALLBACK = '|{{(!)?(javascript)="?([\@a-zA-Z0-9-_/\.\:]+)\|?([\@\:\/0-9a-zA-Z=$,.\?\{\}]+)?"?}}|i';
 
-    public const TEMPLATE_CALLBACK = '|{{(!)?(template)=([a-zA-Z-_/\.]+)\|?(.*)?}}|i';
+    public const TEMPLATE_CALLBACK = '|{{(!)?(template)=([a-zA-Z-_/\.]+)\??(.*)?}}|i';
 
     public const VARIABLE_CALLBACK = '|{\$([a-zA-Z_-]+)([-+]+)?([0-9]+)?(\['."'?([a-zA-Z_]+)'?".'\])?}|';
 
@@ -68,6 +69,7 @@ class Template
     public static $CACHE_DIR = false;
 
     public static $USE_TEMPLATE_CACHE = false;
+    public static $SHOW_CALLBACKS = false;
 
     public static $SITE_URL = '';
 
@@ -92,6 +94,7 @@ class Template
     private static $RenderHTML = '';
 
     public static $Registered_Callbacks;
+    private static $CallbackHtml;
 
     public function __construct()
     {
@@ -152,6 +155,38 @@ class Template
         }
 
         UtmCache::init();
+    }
+
+    public static function getRegisteredCallbacks()
+    {
+        (new self())->__getRegisteredCallbacks();
+    }
+
+    public function __getRegisteredCallbacks()
+    {
+        if (false === self::$SHOW_CALLBACKS) {
+            return null;
+        }
+
+        $id = 0;
+        foreach ($this->registered_callbacks as $pattern => $function) {
+            ++$id;
+            if (!str_contains($pattern, '::')) {
+                $pattern = 'self::'.$pattern;
+                $class = $this;
+            } else {
+                $parts = explode('::', $pattern);
+
+                $class = (new $parts[0]());
+                // $function = $parts[1];
+            }
+            $CallBackHtml[]
+            = Render::html('elements/html/InfoPanel/callbackRow', ['id' => $id, 'pattern' => $pattern, 'regex' => \constant($pattern), 'class' => $class::class, 'function' => $function]);
+        }
+
+        $params['CallBackList'] = implode(\PHP_EOL, $CallBackHtml);
+
+        self::$CallbackHtml = Render::html('elements/html/InfoPanel/popup', $params);
     }
 
     public function registerCallback($constant, $function = '')
@@ -276,13 +311,24 @@ class Template
 
         $html_text = Fileloader::getTemplateFile($template, $extension);
 
-        $replacement_array['self'] = str_replace(\dirname(__DIR__, 4), '', Fileloader::$template_file);
+        $TemplateFile = str_replace(__ROOT_DIRECTORY__, '', Fileloader::$template_file);
+        // $replacement_array['self'] = str_replace(__ROOT_DIRECTORY__, '', $replacement_array['self']);
         $replacement_array = array_merge($replacement_array, self::$params);
         $this->replacement_array = $replacement_array;
         if ('html' == $extension && true == self::$TEMPLATE_COMMENTS) {
-            $_text = '<!-- {$self} --> '.\PHP_EOL;
+            $_text = '';
+            if (!str_ends_with($template, 'header')) {
+                $_text .= '<!-- start {'.$TemplateFile.'} --> '.\PHP_EOL;
+            }
             $_text .= trim($html_text).\PHP_EOL;
-            $_text .= '<!-- end {$self} -->'.\PHP_EOL;
+            if (!str_ends_with($template, 'footer')) {
+                $_text .= '<!-- end {'.$TemplateFile.'} -->'.\PHP_EOL;
+            }
+            if (str_ends_with($template, 'footer')) {
+                if (null !== self::$CallbackHtml) {
+                    $_text .= self::$CallbackHtml;
+                }
+            }
             $html_text = $_text;
             unset($_text);
         }
@@ -290,10 +336,16 @@ class Template
         $html_text = $this->parseHtml($html_text);
 
         if ('js' == $extension) {
-            $html_text = '<script>'.\PHP_EOL.$html_text.\PHP_EOL.'</script>';
+            $__text = '<!-- start {'.$TemplateFile.'} --> '.\PHP_EOL;
+            $__text .= '<script>'.\PHP_EOL.$html_text.\PHP_EOL.'</script>';
+            $__text .= '<!-- end {'.$TemplateFile.'} -->'.\PHP_EOL;
+            $html_text = $__text;
         }
         if ('css' == $extension) {
-            $html_text = '<style>'.\PHP_EOL.$html_text.\PHP_EOL.'</style>';
+            $__text = '<!-- start {'.$TemplateFile.'} --> '.\PHP_EOL;
+            $__text .= '<style>'.\PHP_EOL.$html_text.\PHP_EOL.'</style>';
+            $__text .= '<!-- end {'.$TemplateFile.'} -->'.\PHP_EOL;
+            $html_text = $__text;
         }
         $html_text = trim($html_text).\PHP_EOL;
 
