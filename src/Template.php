@@ -58,6 +58,7 @@ class Template
     public static $TEMPLATE_DIR = __DIR__.'/Templates/Default';
 
     public static $USER_TEMPLATE_DIR = '';
+
     public static $USER_DEFAULT_TEMPLATE = '';
 
     public static $USER_MOBILE_TEMPLATE = '';
@@ -69,6 +70,7 @@ class Template
     public static $CACHE_DIR = false;
 
     public static $USE_TEMPLATE_CACHE = false;
+
     public static $SHOW_CALLBACKS = false;
 
     public static $SITE_URL = '';
@@ -94,6 +96,7 @@ class Template
     private static $RenderHTML = '';
 
     public static $Registered_Callbacks;
+
     private static $CallbackHtml;
 
     public function __construct()
@@ -313,44 +316,51 @@ class Template
 
         $TemplateFile = str_replace(__ROOT_DIRECTORY__, '', Fileloader::$template_file);
         // $replacement_array['self'] = str_replace(__ROOT_DIRECTORY__, '', $replacement_array['self']);
+        if (null !== self::$CallbackHtml) {
+            $replacement_array = array_merge($replacement_array, ['CALLBACKS' => self::$CallbackHtml]);
+        }
+
         $replacement_array = array_merge($replacement_array, self::$params);
         $this->replacement_array = $replacement_array;
-        if ('html' == $extension && true == self::$TEMPLATE_COMMENTS) {
-            $_text = '';
-            if (!str_ends_with($template, 'header')) {
-                $_text .= '<!-- start {'.$TemplateFile.'} --> '.\PHP_EOL;
+
+        if ('html' == $extension) {
+            if (str_contains($html_text, '</body>')) {
+                $html_text = str_replace('</body>', '{$CALLBACKS}  </body>', $html_text);
             }
-            $_text .= trim($html_text).\PHP_EOL;
-            if (!str_ends_with($template, 'footer')) {
-                $_text .= '<!-- end {'.$TemplateFile.'} -->'.\PHP_EOL;
-            }
-            if (str_ends_with($template, 'footer')) {
-                if (null !== self::$CallbackHtml) {
-                    $_text .= self::$CallbackHtml;
-                }
-            }
-            $html_text = $_text;
-            unset($_text);
         }
 
         $html_text = $this->parseHtml($html_text);
 
         if ('js' == $extension) {
-            $__text = '<!-- start {'.$TemplateFile.'} --> '.\PHP_EOL;
-            $__text .= '<script>'.\PHP_EOL.$html_text.\PHP_EOL.'</script>';
-            $__text .= '<!-- end {'.$TemplateFile.'} -->'.\PHP_EOL;
-            $html_text = $__text;
+            $html_text = '<script>'.\PHP_EOL.$html_text.\PHP_EOL.'</script>';
         }
         if ('css' == $extension) {
-            $__text = '<!-- start {'.$TemplateFile.'} --> '.\PHP_EOL;
-            $__text .= '<style>'.\PHP_EOL.$html_text.\PHP_EOL.'</style>';
-            $__text .= '<!-- end {'.$TemplateFile.'} -->'.\PHP_EOL;
-            $html_text = $__text;
+            $html_text = '<style>'.\PHP_EOL.$html_text.\PHP_EOL.'</style>';
         }
+
+        $html_text = self::addComment($TemplateFile, $html_text);
         $html_text = trim($html_text).\PHP_EOL;
 
         $this->html = $html_text;
 
         return $html_text;
+    }
+
+    private function addComment($templateFile, $text)
+    {
+        $start = '';
+        $end = '';
+
+        if (false === self::$TEMPLATE_COMMENTS) {
+            return $text;
+        }
+        if (!str_contains($text, '<html')) {
+            $start = '<!-- start {'.$templateFile.'} --> '.\PHP_EOL;
+        }
+        if (!str_contains($text, '</html>')) {
+            $end = '<!-- end {'.$templateFile.'} -->'.\PHP_EOL;
+        }
+
+        return $start.$text.$end;
     }
 }

@@ -1,7 +1,13 @@
-<tr>
-    <th scope="row">{$id}</th>
-    <td>{$pattern}</td>
-    <td>{$regex}</td>
-    <td>{$class}</td>
-    <td>{$function}</td>
-</tr>
+<div class="row utmCallBacks">
+    <div class="col w-75">
+        <div class="row">
+            <div class="col-1">{$id}</div>
+            <div class="col-10">{$class}::{$function}</div>
+        </div>
+        <div class="row">
+            <div class="col-1"> </div>
+            <div class="col text-nowrap">{$pattern}</div>
+            <div class="col">{$regex}</div>
+        </div>
+    </div>
+</div>
