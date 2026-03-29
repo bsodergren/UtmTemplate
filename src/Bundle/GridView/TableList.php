@@ -2,6 +2,8 @@
 
 namespace UTMTemplate\Bundle\GridView;
 
+use UTMTemplate\Bundle\GridView\Table;
+
 /**
  * Table List Class
  * The idea is for this class to easily build a 2 column table from an array,

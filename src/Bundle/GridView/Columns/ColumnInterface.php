@@ -16,7 +16,7 @@ interface ColumnInterface
 
     public function getFooter();
 
-    public function setTable(\GridView\Table $table);
+    public function setTable(\UTMTemplate\Bundle\GridView\Table $table);
 
     public function tokenize($data);
 

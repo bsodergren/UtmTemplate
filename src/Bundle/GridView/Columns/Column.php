@@ -2,6 +2,10 @@
 
 namespace UTMTemplate\Bundle\GridView\Columns;
 
+use UTMTemplate\Bundle\GridView\Columns\ColumnInterface;
+
+
+
 /**
  * column class is used to eventually create a table cell in the parent table
  * if name is specified then that key is looked for in the data source, and used

@@ -2,6 +2,7 @@
 
 namespace UTMTemplate\Bundle\GridView\Columns;
 
+
 /**
  * this class can be used to display a string of date/time in a column
  * php's \DateTime class will be used to interpret the columns value and
@@ -66,12 +67,13 @@ __JS__;
          }
     }, function(start, end){
         var values = $('#{$this->table->id} .grid-view-filters :input').serialize();
-		window.location = window.location.pathname+'?'+values+'&{$this->name}='+start.format('YYYY-MM-DD')+' - '+end.format('YYYY-MM-DD');
+        window.location = window.location.pathname+'?'+values+'&{$this->name}='+start.format('YYYY-MM-DD')+' - '+end.format('YYYY-MM-DD');
     });
 
 </script>
 __JS__;
         }
+        return null;
     }
 
     public function getFilter()

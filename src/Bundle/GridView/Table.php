@@ -14,14 +14,10 @@ use UTMTemplate\Bundle\GridView\Columns\Column;
  */
 class Table implements \ArrayAccess
 {
-    /**
-     * @var SORT_DIRECTION_ASC ASC
-     */
+
     public const SORT_DIRECTION_ASC = 'ASC';
 
-    /**
-     * @var SORT_DIRECTION_DESC DESC
-     */
+  
     public const SORT_DIRECTION_DESC = 'DESC';
 
     /**
@@ -162,11 +158,7 @@ class Table implements \ArrayAccess
      */
     public $useModalFilters = true;
 
-    /**
-     * function to determine column visibility, like from session?
-     *
-     * @callable
-     */
+   
     public static $visibleColumnsCallback;
 
     /**
@@ -174,13 +166,7 @@ class Table implements \ArrayAccess
      */
     protected $visibleColumns = [];
 
-    /**
-     * Constructor.
-     *
-     * @param type $dataSource
-     *
-     * @throws \RunTimeException on $emptyDataSource
-     */
+   
     public function __construct($dataSource, array $options = [])
     {
         $this->dataSource = $dataSource;
@@ -192,22 +178,14 @@ class Table implements \ArrayAccess
         }
     }
 
-    /**
-     * magic method for adding button types like addCalcColumn().
-     *
-     * @param array $arguments
-     *
-     * @return UTMTemplate\Bundle\GridView
-     *
-     * @throws \BadFunctionCallException
-     */
+  
     public function __call($name, $arguments)
     {
         $add = substr($name, 0, 3);
         if ('add' == $add) {
             $class = substr($name, 3);
 
-            $class = '\UTMTemplate\Bundle\UTMTemplate\Bundle\GridView\Columns\\'.$class;
+            $class = '\UTMTemplate\\UTMTemplate\Bundle\GridView\Columns\\'.$class;
 
             // if arg is just a string, create an array.
             $arg = $arguments[0];
@@ -290,14 +268,7 @@ class Table implements \ArrayAccess
         unset($this->columns[$id]);
     }
 
-    /**
-     * generate and retrieve the url with sort parameters using the $sortDirection
-     * and $sortUrl for given column $name.
-     *
-     * @param string $column
-     *
-     * @return string
-     */
+  
     public function getSortUrl($column)
     {
         $this->sortDirection = $this->getSortDirectionForColumn($column);
@@ -314,13 +285,7 @@ class Table implements \ArrayAccess
         return $this->sortUrl.'?'.$query;
     }
 
-    /**
-     * Get sort direction for column based on query string.
-     *
-     * @param string $column
-     *
-     * @return string
-     */
+ 
     public function getSortDirectionForColumn($column)
     {
         $sortDirection = $column->sortDirection ?: self::SORT_DIRECTION_ASC;
@@ -423,9 +388,7 @@ class Table implements \ArrayAccess
         return ob_get_clean();
     }
 
-    /**
-     * @return string
-     */
+  
     public function renderModalFilters()
     {
         $this->useColumnFilters = false;
@@ -526,14 +489,7 @@ MODAL;
         return $html;
     }
 
-    /**
-     * create the the string of html for the table footer. It will inspect each
-     * element of the footer array to see if it has a callable function in the
-     * format key, and format the value key using that function, otherwise it will
-     * not print anything to the column.
-     *
-     * @return string
-     */
+   
     public function renderFooter()
     {
         if (empty($this->footers)) {
@@ -803,13 +759,7 @@ MODAL;
         return $this->javascript;
     }
 
-    /**
-     * get the $footers value for key $name.
-     *
-     * @param string $name
-     *
-     * @return string
-     */
+  
     public function getFooterValue($name)
     {
         if (\array_key_exists($name, $this->footers)) {
@@ -817,12 +767,7 @@ MODAL;
         }
     }
 
-    /**
-     * set footer value in $footers array.
-     *
-     * @param string $name
-     * @param string $value
-     */
+ 
     public function setFooterValue($name, $value)
     {
         if (\array_key_exists($name, $this->footers)) {
