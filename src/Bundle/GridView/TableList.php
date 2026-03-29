@@ -2,7 +2,7 @@
 
 namespace UTMTemplate\Bundle\GridView;
 
-use UTMTemplate\Bundle\GridView\Table;
+use UTMTemplate\Render;
 
 /**
  * Table List Class
@@ -43,15 +43,18 @@ class TableList extends Table
 
     protected $visibleColumns = false;
 
+    protected $templateDir = '';
+
     /**
      * Constructor.
-     *
-     * @param  $dataSource
      *
      * @throws \RunTimeException on empty $dataSource
      */
     public function __construct($dataSource, ?array $options = null)
     {
+        $className = __CLASS__;
+        utmdump(__CLASS__);
+        $this->templateDir = Table::$TemplateDir.'/';
         $this->dataSource = $dataSource;
 
         if (empty($options)) {
@@ -89,10 +92,10 @@ class TableList extends Table
         ob_start();
         ?>
 <tr>
-	<th><?php echo $this->labelColumnHeader; ?>
-	</th>
-	<th><?php echo $this->valueColumnHeader; ?>
-	</th>
+    <th><?php echo $this->labelColumnHeader; ?>
+    </th>
+    <th><?php echo $this->valueColumnHeader; ?>
+    </th>
 </tr>
 <?php
         return ob_get_clean();
@@ -108,8 +111,8 @@ class TableList extends Table
         ob_start();
         ?>
 <tr>
-	<td></td>
-	<td></td>
+    <td></td>
+    <td></td>
 </tr>
 <?php
         return ob_get_clean();
@@ -156,16 +159,16 @@ class TableList extends Table
         ob_start();
         ?>
 <table class="<?php echo $this->tableCss; ?>"
-	   id="<?php echo $this->id; ?>">
-	<thead>
-		<?php echo $this->renderHeader(); ?>
-	</thead>
-	<tbody>
-		<?php echo $this->renderTableBody(); ?>
-	</tbody>
-	<tfoot>
-		<?php echo $this->renderFooter(); ?>
-	</tfoot>
+       id="<?php echo $this->id; ?>">
+    <thead>
+        <?php echo $this->renderHeader(); ?>
+    </thead>
+    <tbody>
+        <?php echo $this->renderTableBody(); ?>
+    </tbody>
+    <tfoot>
+        <?php echo $this->renderFooter(); ?>
+    </tfoot>
 </table>
 <?php echo $this->javaScript(); ?>
 <?php
@@ -181,13 +184,9 @@ class TableList extends Table
     {
         if (empty($this->dataSource) || 0 == \count($this->dataSource)) {
             ob_start();
-            ?>
-<tr>
-	<td colspan="2">
-		<?php echo $this->noResultsText; ?>
-	</td>
-</tr>
-<?php
+            $param = ['noResultsText' => $this->noResultsText];
+            Render::echo(Table::$templateDir, $param);
+
             return ob_get_clean();
         }
 
@@ -207,15 +206,16 @@ class TableList extends Table
         ob_start();
         ?>
 <tr
-	class="<?php echo $this->getTableRowCss($this->dataSource, $index); ?>">
-	<th>
-		<?php echo $column->getHeader(); ?>
-	</th>
-	<td
-		class="<?php echo $column->cellCss; ?>">
-		<?php echo $column->setData($this->dataSource)->getValue($index); ?>
-	</td>
+    class="<?php echo $this->getTableRowCss($this->dataSource, $index); ?>">
+    <th>
+        <?php echo $column->getHeader(); ?>
+    </th>
+    <td
+        class="<?php echo $column->cellCss; ?>">
+        <?php echo $column->setData($this->dataSource)->getValue($index); ?>
+    </td>
 </tr>
 <?php return ob_get_clean();
     }
 }
+?>

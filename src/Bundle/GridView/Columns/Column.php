@@ -2,9 +2,8 @@
 
 namespace UTMTemplate\Bundle\GridView\Columns;
 
-use UTMTemplate\Bundle\GridView\Columns\ColumnInterface;
-
-
+use UTMTemplate\Bundle\GridView\Table;
+use UTMTemplate\Render;
 
 /**
  * column class is used to eventually create a table cell in the parent table
@@ -111,7 +110,7 @@ class Column implements ColumnInterface
     /**
      * the table instance injected into this column.
      *
-     * @var \UTMTemplate\Bundle\GridView\Table
+     * @var Table
      */
     protected $table;
 
@@ -119,12 +118,14 @@ class Column implements ColumnInterface
      * data passed from the table to this object to be used to find name/value etc.
      */
     protected $data = [];
+    protected $templateDir;
 
     /**
      * Constructor.
      */
     public function __construct(array $config)
     {
+        $this->templateDir = Table::getTemplatePath(__CLASS__);
         foreach ($config as $var => $value) {
             $this->{$var} = $value;
         }
@@ -146,9 +147,9 @@ class Column implements ColumnInterface
     /**
      * inject table instance.
      *
-     * @return \UTMTemplate\Bundle\GridView\Columns\Column
+     * @return Column
      */
-    public function setTable(\UTMTemplate\Bundle\GridView\Table $table)
+    public function setTable(Table $table)
     {
         $this->table = $table;
 
@@ -158,9 +159,7 @@ class Column implements ColumnInterface
     /**
      * Data passed from table to this column.
      *
-     * @param  $data
-     *
-     * @return \UTMTemplate\Bundle\GridView\Columns\Column
+     * @return Column
      */
     public function setData($data)
     {
@@ -184,21 +183,17 @@ class Column implements ColumnInterface
         }
 
         if (isset($this->filter) && \is_array($this->filter)) {
-            return \sprintf(
-                '<select name="%s" class="form-control">%s</select>',
-                $this->name,
-                $this->buildDropDownList($this->filter, $value)
-            );
+            return Render::html($this->templateDir.'/'.__FUNCTION__.'_select', ['name' => $this->name,
+                'DropdownList' => $this->buildDropDownList($this->filter, $value)]);
         }
 
         if (!isset($this->filter)) {
-            return \sprintf(
-                '<div class="grid-view-filter-container">
-                <input type="text" name="%s" style="width:100%%" class="grid-view-filter input-small form-control" value="%s">
-                </div>',
-                $this->name,
-                $value
-            );
+            $param = ['name' => $this->name,
+                'value' => $value];
+
+            return Render::html($this->templateDir.'/'.__FUNCTION__.'_none',
+                ['name' => $this->name,
+                    'value' => $value]);
         }
 
         return $this->filter;
@@ -216,11 +211,9 @@ class Column implements ColumnInterface
         $optionsHtml = '';
         foreach ($options as $key => $value) {
             if (\is_array($value)) {
-                $optionsHtml .= \sprintf(
-                    '<optgroup label="%s">%s</optgroup>',
-                    $key,
-                    $this->listOptions($value, $selectedValue)
-                );
+                $optionsHtml .= Render::html($this->templateDir.'/'.__FUNCTION__.'',
+                    ['key' => $key,
+                        'option' => $this->listOptions($value, $selectedValue)]);
                 continue;
             }
             $optionsHtml .= $this->listOptions([$key => $value], $selectedValue);
@@ -250,12 +243,10 @@ class Column implements ColumnInterface
             if (0 == strcmp($selectedValue, $key)) {
                 $selected = 'selected="selected"';
             }
-
-            $optionsHtml .= \sprintf(
-                '<option value="%s" %s>%s</option>',
-                htmlspecialchars($key, \ENT_QUOTES),
-                $selected,
-                htmlspecialchars($value, \ENT_QUOTES)
+            $optionsHtml .= Render::html($this->templateDir.'/'.__FUNCTION__.'', [
+                'key' => htmlspecialchars($key, \ENT_QUOTES),
+                'selected' => $selected,
+                'value' => htmlspecialchars($value, \ENT_QUOTES)]
             );
         }
 
@@ -273,11 +264,9 @@ class Column implements ColumnInterface
         $this->header = $this->getHeaderName();
 
         if ($this->sortable) {
-            return \sprintf('<a href="%s" class="sort-link sort-dir-%s">%s</a>',
-                $this->table->getSortUrl($this),
-                strtolower($this->sortDirection),
-                $this->header
-            );
+            return Render::html($this->templateDir.'/'.__FUNCTION__.'', ['url' => $this->table->getSortUrl($this),
+                'dir' => strtolower($this->sortDirection),
+                'header' => $this->header]);
         }
 
         return $this->header;

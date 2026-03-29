@@ -2,7 +2,9 @@
 
 namespace UTMTemplate\Bundle\GridView;
 
+use Nette\Utils\Strings;
 use UTMTemplate\Bundle\GridView\Columns\Column;
+use UTMTemplate\Render;
 
 /**
  * Table Class
@@ -15,6 +17,7 @@ use UTMTemplate\Bundle\GridView\Columns\Column;
 class Table implements \ArrayAccess
 {
 
+public static $TemplateDir = '/elements/GridView';
     public const SORT_DIRECTION_ASC = 'ASC';
 
   
@@ -165,10 +168,12 @@ class Table implements \ArrayAccess
      * @var array
      */
     protected $visibleColumns = [];
-
+  protected $templateDir = '';
    
     public function __construct($dataSource, array $options = [])
     {
+
+        $this->templateDir = self::getTemplatePath(__CLASS__);
         $this->dataSource = $dataSource;
         $this->setConfigOptions($options);
 
@@ -178,6 +183,10 @@ class Table implements \ArrayAccess
         }
     }
 
+    public static function getTemplatePath($class){
+        $className = Strings::after($class,'\\',-1);
+        return self::$TemplateDir.'/'.$className;
+    }
   
     public function __call($name, $arguments)
     {
@@ -372,11 +381,17 @@ class Table implements \ArrayAccess
             $headers[] = $c->getHeader();
             $filters[] = $c->getFilter();
         }
+
+         Render::html($this->templateDir.'/'.__FUNCTION__.'/tableRow',[
+            'class'=>"grid-view-headers",
+         ]);
         ?>
-<tr class="grid-view-headers">
+<tr class="{$class}">
     <th><?php echo implode("\n</th>\n<th>\n", $headers); ?>
     </th>
 </tr>
+
+
 <?php if (!$this->useColumnFilters) {
     return ob_get_clean();
 }?>

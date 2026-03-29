@@ -38,6 +38,7 @@ class Template
     public const BUTTON_CALLBACK = '|{{button=([a-zA-Z_]+)\|?(.*)?}}|i';
 
     public const ICON_CALLBACK = '|{{icon=([a-zA-Z_]+)\|?(.*)?}}|i';
+      public const LOOP_CALLBACK = '|{loop var=\[(.*)\] template=(.*) param=(.*)}|';
 
     public $html;
 

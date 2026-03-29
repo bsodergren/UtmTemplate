@@ -7,11 +7,13 @@ use UTMTemplate\Functions\Traits\Parser;
 use UTMTemplate\HTML\Elements;
 use UTMTemplate\Render;
 use UTMTemplate\Traits\Callbacks\IfStatement;
+use UTMTemplate\Traits\Callbacks\LoopFunction;
 use UTMTemplate\Traits\Callbacks\Variable;
 
 trait Callbacks
 {
     use IfStatement;
+    use LoopFunction;
     use Parser;
     use Variable;
 
@@ -27,6 +29,7 @@ trait Callbacks
         'EXPLODE_CALLBACK' => 'callback_explode_callback',
         'BUTTON_CALLBACK' => 'callback_parse_button',
         'ICON_CALLBACK' => 'callback_parse_icon',
+        'LOOP_CALLBACK' => 'callback_loop_function',
     ];
 
     public static function get_callback($method)
