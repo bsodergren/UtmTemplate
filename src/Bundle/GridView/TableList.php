@@ -46,7 +46,7 @@ class TableList extends Table
     /**
      * Constructor.
      *
-     * @param type $dataSource
+     * @param  $dataSource
      *
      * @throws \RunTimeException on empty $dataSource
      */

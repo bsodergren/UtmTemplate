@@ -2,6 +2,8 @@
 
 namespace UTMTemplate\Bundle\GridView\Columns;
 
+use UTMTemplate\Bundle\GridView\Columns\Column;
+
 // http://vitalets.github.io/x-editable/docs.html
 
 class EditableColumn extends Column
@@ -91,6 +93,8 @@ __JS__;
         if (\is_object($this->data)) {
             return (string) $this->data->{$pk};
         }
+
+        return '';
     }
 
     public function getJavaScript()

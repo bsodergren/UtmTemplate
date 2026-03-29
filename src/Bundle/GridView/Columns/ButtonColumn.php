@@ -1,6 +1,8 @@
 <?php
 
 namespace UTMTemplate\Bundle\GridView\Columns;
+use UTMTemplate\Bundle\GridView\Columns\Column;
+
 
 /**
  * this class will create 1 table cell that is filled with the \Buttons\Button

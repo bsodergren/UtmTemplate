@@ -2,6 +2,8 @@
 
 namespace UTMTemplate\Bundle\GridView\Buttons;
 
+use UTMTemplate\Bundle\GridView\Buttons\Button;
+
 /**
  * create a button that will have Edit as a label and will have a link to the
  * given url.

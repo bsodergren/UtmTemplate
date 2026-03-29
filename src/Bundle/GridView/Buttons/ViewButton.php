@@ -2,6 +2,8 @@
 
 namespace UTMTemplate\Bundle\GridView\Buttons;
 
+use UTMTemplate\Bundle\GridView\Buttons\Button;
+
 /**
  * create a button with View as a label and linked with the given url.
  */

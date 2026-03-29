@@ -111,7 +111,7 @@ class Column implements ColumnInterface
     /**
      * the table instance injected into this column.
      *
-     * @var \GridView\Table
+     * @var \UTMTemplate\Bundle\GridView\Table
      */
     protected $table;
 
@@ -146,9 +146,9 @@ class Column implements ColumnInterface
     /**
      * inject table instance.
      *
-     * @return \GridView\Columns\Column
+     * @return \UTMTemplate\Bundle\GridView\Columns\Column
      */
-    public function setTable(\GridView\Table $table)
+    public function setTable(\UTMTemplate\Bundle\GridView\Table $table)
     {
         $this->table = $table;
 
@@ -158,9 +158,9 @@ class Column implements ColumnInterface
     /**
      * Data passed from table to this column.
      *
-     * @param type $data
+     * @param  $data
      *
-     * @return \GridView\Columns\Column
+     * @return \UTMTemplate\Bundle\GridView\Columns\Column
      */
     public function setData($data)
     {
@@ -339,6 +339,8 @@ class Column implements ColumnInterface
             return $this->raw ? (string) $this->data->{$this->name}
                 : htmlspecialchars((string) $this->data->{$this->name}, \ENT_QUOTES);
         }
+
+        return '';
     }
 
     /**

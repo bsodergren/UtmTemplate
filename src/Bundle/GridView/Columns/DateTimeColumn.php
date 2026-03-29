@@ -2,6 +2,7 @@
 
 namespace UTMTemplate\Bundle\GridView\Columns;
 
+use UTMTemplate\Bundle\GridView\Columns\Column;
 
 /**
  * this class can be used to display a string of date/time in a column

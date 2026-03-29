@@ -1,6 +1,7 @@
 <?php
 
 namespace UTMTemplate\Bundle\GridView\Columns;
+use UTMTemplate\Bundle\GridView\Columns\Column;
 
 /**
  * this column will create a checkbox in the table cell, and a checkbox for the
@@ -26,7 +27,7 @@ class CheckBoxColumn extends Column
     /**
      * Render a checkbox while checking if the checkbox should be checked by default.
      *
-     * @param type $index
+     * @param  $index
      *
      * @return string
      */

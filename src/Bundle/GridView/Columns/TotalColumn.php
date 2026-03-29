@@ -1,6 +1,7 @@
 <?php
 
 namespace UTMTemplate\Bundle\GridView\Columns;
+use UTMTemplate\Bundle\GridView\Columns\Column;
 
 /**
  * this class is used to sum up amounts in this column, then put a total in the

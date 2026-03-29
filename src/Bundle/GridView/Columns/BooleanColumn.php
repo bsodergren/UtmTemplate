@@ -1,6 +1,7 @@
 <?php
 
 namespace UTMTemplate\Bundle\GridView\Columns;
+use UTMTemplate\Bundle\GridView\Columns\Column;
 
 /**
  * This column can be used to perform user specified calculations on any data

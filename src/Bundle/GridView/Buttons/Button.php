@@ -2,6 +2,8 @@
 
 namespace UTMTemplate\Bundle\GridView\Buttons;
 
+use UTMTemplate\Bundle\GridView\Buttons\ButtonInterface;
+
 class Button implements ButtonInterface
 {
     /**
@@ -125,12 +127,12 @@ class Button implements ButtonInterface
     /**
      * call render when this class is cast as a string.
      *
-     * @return string|null
+     * @return string
      */
     public function __toString()
     {
         if (!$this->isVisible()) {
-            return null;
+            return '';
         }
 
         return $this->render();

@@ -2,6 +2,8 @@
 
 namespace UTMTemplate\Bundle\GridView\Buttons;
 
+use UTMTemplate\Bundle\GridView\Buttons\Button;
+
 /**
  * create a button inside of a form that will do a post request to the given
  * url. By default a javascript confirm dialog will be created.

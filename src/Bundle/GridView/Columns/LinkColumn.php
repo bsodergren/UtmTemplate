@@ -2,6 +2,9 @@
 
 namespace UTMTemplate\Bundle\GridView\Columns;
 
+
+use UTMTemplate\Bundle\GridView\Columns\Column;
+ 
 /**
  * this class should be used to render anchor tags in a column cell. you can use
  * token replacements in the url and header to generate links based off of the data
