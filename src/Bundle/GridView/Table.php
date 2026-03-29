@@ -16,11 +16,9 @@ use UTMTemplate\Render;
  */
 class Table implements \ArrayAccess
 {
-
-public static $TemplateDir = '/elements/GridView';
+    public static $TemplateDir = '/elements/GridView';
     public const SORT_DIRECTION_ASC = 'ASC';
 
-  
     public const SORT_DIRECTION_DESC = 'DESC';
 
     /**
@@ -130,7 +128,7 @@ public static $TemplateDir = '/elements/GridView';
      *
      * @var bool
      */
-    public $showItemsPerPageHeader = false;
+    public $showItemsPerPageHeader = true;
 
     /**
      * Collection of buttons added via the addEditButton(), addViewButton, and
@@ -152,7 +150,7 @@ public static $TemplateDir = '/elements/GridView';
     /**
      * @var bool
      */
-    public $useColumnFilters = false;
+    public $useColumnFilters = true;
 
     /**
      * use the modal filter by default. the column headers are freaking annoying as fuck.
@@ -161,18 +159,16 @@ public static $TemplateDir = '/elements/GridView';
      */
     public $useModalFilters = true;
 
-   
     public static $visibleColumnsCallback;
 
     /**
      * @var array
      */
     protected $visibleColumns = [];
-  protected $templateDir = '';
-   
+    protected $templateDir = '';
+
     public function __construct($dataSource, array $options = [])
     {
-
         $this->templateDir = self::getTemplatePath(__CLASS__);
         $this->dataSource = $dataSource;
         $this->setConfigOptions($options);
@@ -183,18 +179,20 @@ public static $TemplateDir = '/elements/GridView';
         }
     }
 
-    public static function getTemplatePath($class){
-        $className = Strings::after($class,'\\',-1);
+    public static function getTemplatePath($class)
+    {
+        $className = Strings::after($class, '\\', -1);
+
         return self::$TemplateDir.'/'.$className;
     }
-  
+
     public function __call($name, $arguments)
     {
         $add = substr($name, 0, 3);
         if ('add' == $add) {
             $class = substr($name, 3);
 
-            $class = '\UTMTemplate\\UTMTemplate\Bundle\GridView\Columns\\'.$class;
+            $class = '\UTMTemplate\UTMTemplate\Bundle\GridView\Columns\\'.$class;
 
             // if arg is just a string, create an array.
             $arg = $arguments[0];
@@ -227,11 +225,7 @@ public static $TemplateDir = '/elements/GridView';
         }
     }
 
-    /**
-     * add elements to table via array access.
-     *
-     * @param string $value
-     */
+
     public function offsetSet($id, $value)
     {
         if (null === $id) {
@@ -277,7 +271,6 @@ public static $TemplateDir = '/elements/GridView';
         unset($this->columns[$id]);
     }
 
-  
     public function getSortUrl($column)
     {
         $this->sortDirection = $this->getSortDirectionForColumn($column);
@@ -294,7 +287,6 @@ public static $TemplateDir = '/elements/GridView';
         return $this->sortUrl.'?'.$query;
     }
 
- 
     public function getSortDirectionForColumn($column)
     {
         $sortDirection = $column->sortDirection ?: self::SORT_DIRECTION_ASC;
@@ -313,18 +305,17 @@ public static $TemplateDir = '/elements/GridView';
      * used for the $name property of the column, and a UTMTemplate\Bundle\GridView\Columns\Column
      * instance will be created.
      *
-     * @return \UTMTemplate\Bundle\GridView\Table
+     * @return Table
      */
     public function addColumn($column)
     {
         if (\is_array($column)) {
-            $column = new Columns\Column($column);
+            $column = new Column($column);
         }
 
         if (\is_scalar($column)) {
-            $column = new Columns\Column(['name' => $column]);
+            $column = new Column(['name' => $column]);
         }
-
         $column->setTable($this);
 
         $this->javascript .= $column->getJavaScript();
@@ -382,28 +373,27 @@ public static $TemplateDir = '/elements/GridView';
             $filters[] = $c->getFilter();
         }
 
-         Render::html($this->templateDir.'/'.__FUNCTION__.'/tableRow',[
-            'class'=>"grid-view-headers",
-         ]);
-        ?>
-<tr class="{$class}">
-    <th><?php echo implode("\n</th>\n<th>\n", $headers); ?>
-    </th>
-</tr>
+        echo Render::echo($this->templateDir.'/'.__FUNCTION__.'/tableRow', [
+            'class' => 'grid-view-headers',
+            'loopArray' => serialize($headers),
+            'loopVariable' => 'header',
+            'loopTemplate' => $this->templateDir.'/'.__FUNCTION__.'/tableRowCell',
+        ]);
 
+        if (!$this->useColumnFilters) {
+            return ob_get_clean();
+        }
 
-<?php if (!$this->useColumnFilters) {
-    return ob_get_clean();
-}?>
-<tr class="grid-view-filters">
-    <th><?php echo implode("\n</th>\n<th>\n", $filters); ?>
-    </th>
-</tr>
-<?php
+       echo Render::echo($this->templateDir.'/'.__FUNCTION__.'/tableRow', [
+            'class' => 'grid-view-filters',
+            'loopArray' => serialize($filters),
+            'loopVariable' => 'header',
+            'loopTemplate' => $this->templateDir.'/'.__FUNCTION__.'/tableRowCell',
+        ]);
+
         return ob_get_clean();
     }
 
-  
     public function renderModalFilters()
     {
         $this->useColumnFilters = false;
@@ -431,10 +421,12 @@ public static $TemplateDir = '/elements/GridView';
                 $checked = 'checked="checked"';
             }
 
-            $filters[] = '<div class="form-group">
-                            <label class="checkbox">
-                            <input type="checkbox" name="columns['.$c->name.']" value="1" '.$checked.'>
-                            '.$c->getHeaderName().'</label>'.$filter.'</div>';
+           $filters[] =   Render::return($this->templateDir.'/'.__FUNCTION__.'/filterList', [
+            'name' => $c->name,
+            'checked' => $checked,
+            'headerName' => $c->getHeaderName(),
+            'flter' => $filter,
+        ]);
         }
 
         $filters = implode(\PHP_EOL, $filters);
@@ -462,49 +454,14 @@ public static $TemplateDir = '/elements/GridView';
             $hidden .= "<input type='hidden' value='{$v}' name='{$k}'>".\PHP_EOL;
         }
 
-        $html = <<<MODAL
-
-<button type="button" data-toggle="modal" href="#modal-grid-filters" class="btn btn-success"><i class="fa fa-search-plus"></i> Filter Table</button>
-
-<!-- Modal -->
-<div class="modal fade" id="modal-grid-filters" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Filter Table</h4>
-            </div>
-            <div class="modal-body">
-                <label><input type="checkbox" class="select-all-fields">Select All</label>
-                <form action="" method="get" id="grid-filter-form">
-                    {$hidden}
-                    {$filters}
-                    <input type="reset" name="reset" value="Reset Form" class="btn btn-danger modal-reset">
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary modal-save">Filter</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<script type="text/javascript">
-    $('#modal-grid-filters .modal-save').click(function(){
-        $('#grid-filter-form').submit();
-    });
-    $('.select-all-fields').click(function(){
-        var checks = $('.modal-body :checkbox');
-        checks.prop("checked", $(this).is(':checked'));
-    });
-</script>
-MODAL;
+        $html =  Render::return($this->templateDir.'/'.__FUNCTION__.'/filterModal', [
+            'hidden' => $hidden,
+            'filters' => $filters,
+        ]);
 
         return $html;
     }
 
-   
     public function renderFooter()
     {
         if (empty($this->footers)) {
@@ -774,7 +731,6 @@ MODAL;
         return $this->javascript;
     }
 
-  
     public function getFooterValue($name)
     {
         if (\array_key_exists($name, $this->footers)) {
@@ -782,7 +738,6 @@ MODAL;
         }
     }
 
- 
     public function setFooterValue($name, $value)
     {
         if (\array_key_exists($name, $this->footers)) {
@@ -795,7 +750,7 @@ MODAL;
      *
      * @param string $url
      *
-     * @return \UTMTemplate\Bundle\GridView\Table
+     * @return Table
      */
     public function addViewButton($url, array $config = [])
     {
@@ -809,7 +764,7 @@ MODAL;
      *
      * @param string $url
      *
-     * @return \UTMTemplate\Bundle\GridView\Table
+     * @return Table
      */
     public function addEditButton($url, array $config = [])
     {
@@ -823,7 +778,7 @@ MODAL;
      *
      * @param string $url
      *
-     * @return \UTMTemplate\Bundle\GridView\Table
+     * @return Table
      */
     public function addDeleteButton($url, array $config = [])
     {

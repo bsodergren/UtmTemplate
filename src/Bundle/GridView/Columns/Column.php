@@ -2,6 +2,7 @@
 
 namespace UTMTemplate\Bundle\GridView\Columns;
 
+use  UTMTemplate\Bundle\GridView\Columns\ColumnInterface;
 use UTMTemplate\Bundle\GridView\Table;
 use UTMTemplate\Render;
 
@@ -126,10 +127,11 @@ class Column implements ColumnInterface
     public function __construct(array $config)
     {
         $this->templateDir = Table::getTemplatePath(__CLASS__);
+       
         foreach ($config as $var => $value) {
             $this->{$var} = $value;
+ 
         }
-
         // make sure that you can get some sort of name.
         if (!$this->sortable) {
             return;
@@ -310,16 +312,16 @@ class Column implements ColumnInterface
         if (isset($this->value)) {
             return $this->value;
         }
+       
 
         if (\is_array($this->data)) {
             if (\is_array($this->data[$this->name])) {
                 return 'Array()';
             }
-
+ 
             return $this->raw ? (string) $this->data[$this->name]
                 : htmlspecialchars((string) $this->data[$this->name], \ENT_QUOTES);
         }
-
         if (\is_object($this->data)) {
             if (\is_array($this->data->{$this->name})) {
                 return 'Array()';
@@ -339,6 +341,7 @@ class Column implements ColumnInterface
      */
     public function isVisible()
     {
+
         return (bool) $this->visible;
     }
 
@@ -352,6 +355,8 @@ class Column implements ColumnInterface
      */
     public function tokenize($data)
     {
+            
+
         if (\is_object($data) && method_exists($data, 'toArray')) {
             $data = $data->toArray();
         }
@@ -362,7 +367,6 @@ class Column implements ColumnInterface
             }
             $this->tokens['{'.$key.'}'] = (string) $value;
         }
-
         return $this->tokens;
     }
 

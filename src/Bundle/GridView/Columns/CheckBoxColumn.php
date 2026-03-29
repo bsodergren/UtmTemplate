@@ -34,6 +34,7 @@ class CheckBoxColumn extends Column
     public function getValue($index)
     {
         $value = parent::getValue($index);
+      
         $checked = $this->isChecked($this->data) ? 'checked="checked"' : null;
 
         return \sprintf('<label><input type="checkbox" name="%s[]" class="grid-view-checkbox" value="%s" %s> %s</label>',
@@ -51,6 +52,8 @@ class CheckBoxColumn extends Column
      */
     public function isChecked($data)
     {
+
+
         if (\is_callable($this->checked)) {
             $func = $this->checked;
 

@@ -14,7 +14,8 @@ set_include_path(get_include_path().\PATH_SEPARATOR.__COMPOSER_LIB__);
 require_once __COMPOSER_LIB__.'/autoload.php';
 
 $utm = new Utm();
-Utm::LoadEnv(__TEST_HTML_DIR__);
+Utm::LoadEnv(__TEST_HTML_DIR__)->load();
+
 
 // Utm::$SHOW_HTML_DUMP = true;
 
@@ -31,7 +32,7 @@ define('__LAYOUT_URL__', __URL_HOME__.'/assets');
 
 Template::$SHOW_CALLBACKS = true;
 Template::$USER_TEMPLATE_DIR = __HTML_TEMPLATE__;
-Template::$TEMPLATE_COMMENTS = true;
+Template::$TEMPLATE_COMMENTS = false;
 Template::$SITE_URL = __LAYOUT_URL__;
 Template::$SITE_PATH = __LAYOUT_PATH__;
 Template::$ASSETS_URL = __LAYOUT_URL__.\DIRECTORY_SEPARATOR.'Default';

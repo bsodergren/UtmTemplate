@@ -1,0 +1,38 @@
+
+<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modal-grid-filters"><i class="fa fa-search-plus"></i> Filter Table</button>
+
+<!-- Modal -->
+
+<div class="modal fade" id="modal-grid-filters" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                        <button type="button" class="btn-close btn" data-bs-dismiss="modal" style="margin:0px"></button>
+
+                <h4 class="modal-title">Filter Table</h4>
+            </div>
+            <div class="modal-body">
+                <label><input type="checkbox" class="select-all-fields">Select All</label>
+                <form action="" method="get" id="grid-filter-form">
+                    {$hidden}
+                    {$filters}
+                    <input type="reset" name="reset" value="Reset Form" class="btn btn-danger modal-reset">
+                </form>
+            </div>
+            <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary modal-save">Filter</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+    $('#modal-grid-filters .modal-save').click(function(){
+        $('#grid-filter-form').submit();
+    });
+    $('.select-all-fields').click(function(){
+        var checks = $('.modal-body :checkbox');
+        checks.prop("checked", $(this).is(':checked'));
+    });
+</script>
