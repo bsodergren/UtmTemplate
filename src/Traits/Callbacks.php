@@ -30,6 +30,7 @@ trait Callbacks
         'BUTTON_CALLBACK' => 'callback_parse_button',
         'ICON_CALLBACK' => 'callback_parse_icon',
         'LOOP_CALLBACK' => 'callback_loop_function',
+        'MAGICVAR_CALLBACK' => 'callback_magic_function',
     ];
 
     public static function get_callback($method)
@@ -99,6 +100,7 @@ trait Callbacks
                 $array = explode('=', $values);
                 if ('ext' == $array[0]) {
                     $ext = $array[1];
+
                     continue;
                 }
                 $param_array[$array[0]] = $array[1];
@@ -129,6 +131,19 @@ trait Callbacks
         }
 
         return $dom;
+    }
+
+    public function callback_magic_function($matches)
+    {
+        switch ($matches[1]) {
+            case 'TemplateId':
+                $html = ' template-d-filename="'.$this->template_file.'"';
+
+                return $html;
+                break;
+        }
+        // utmdd($this->template_file);
+        // utmdump([$matches, \get_class_vars(get_class($this))]);
     }
 
     private function callback_badge($matches)

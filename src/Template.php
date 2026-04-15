@@ -38,7 +38,10 @@ class Template
     public const BUTTON_CALLBACK = '|{{button=([a-zA-Z_]+)\|?(.*)?}}|i';
 
     public const ICON_CALLBACK = '|{{icon=([a-zA-Z_]+)\|?(.*)?}}|i';
-      public const LOOP_CALLBACK = '|{loop var=\[(.*)\] template=(.*) param=(.*)}|';
+
+    public const LOOP_CALLBACK = '|{loop var=\[(.*)\] template=(.*) param=(.*)}|';
+
+    public const MAGICVAR_CALLBACK = '|{\%\%([a-zA-Z_-]+)\%?\%?}|i';
 
     public $html;
 
@@ -298,8 +301,11 @@ class Template
                 $parts = explode('::', $pattern);
                 // UtmDump([$pattern,$parts,$function]);
                 $class = (new $parts[0]());
+
                 // $function = $parts[1];
             }
+            $class->template_file = $this->template_file;
+
             $html_text = preg_replace_callback(\constant($pattern), [$class, $function], $html_text);
         }
 
@@ -316,6 +322,7 @@ class Template
         $html_text = Fileloader::getTemplateFile($template, $extension);
 
         $TemplateFile = str_replace(__ROOT_DIRECTORY__, '', Fileloader::$template_file);
+        $this->template_file = $TemplateFile;
         // $replacement_array['self'] = str_replace(__ROOT_DIRECTORY__, '', $replacement_array['self']);
         if (null !== self::$CallbackHtml) {
             $replacement_array = array_merge($replacement_array, ['CALLBACKS' => self::$CallbackHtml]);

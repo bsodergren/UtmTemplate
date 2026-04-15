@@ -1,5 +1,6 @@
 <?php
 
+use TemplateConfig;
 use UTM\Utm;
 use UTMTemplate\Template;
 use UTMTemplate\UtmDevice;
@@ -16,6 +17,14 @@ require_once __COMPOSER_LIB__.'/autoload.php';
 $utm = new Utm();
 Utm::LoadEnv(__TEST_HTML_DIR__)->load();
 
+$config = new TemplateConfig([
+    'template_dir' => __TEST_HTML_DIR__.'/html',
+    'cache_dir' => __TEST_HTML_DIR__.'/var/cache/template',
+    'debug' => true,
+    'user_dir' => __TEST_HTML_DIR__.'/html',
+]);
+
+new Template($config);
 
 // Utm::$SHOW_HTML_DUMP = true;
 

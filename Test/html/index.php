@@ -4,11 +4,10 @@ use UTMTemplate\Bundle\GridView\Buttons\DeleteButton;
 use UTMTemplate\Bundle\GridView\Buttons\EditButton;
 use UTMTemplate\Bundle\GridView\Buttons\ViewButton;
 use UTMTemplate\Bundle\GridView\Columns\ButtonColumn;
-use UTMTemplate\Bundle\GridView\Columns\DateTimeColumn;
-// use UTMTemplate\Bundle\GridView\Columns\LinkColumn;
 use UTMTemplate\Bundle\GridView\Columns\CheckBoxColumn;
+// use UTMTemplate\Bundle\GridView\Columns\LinkColumn;
+use UTMTemplate\Bundle\GridView\Columns\DateTimeColumn;
 use UTMTemplate\Bundle\GridView\Table;
-
 use UTMTemplate\Render;
 use UTMTemplate\Template;
 
@@ -29,13 +28,13 @@ for ($i = 0; $i < 10; ++$i) {
 
 $table = new Table($dataSource);
 $table->addColumn(
-        new CheckBoxColumn([
-            'name' => 'checkbox',
-            'checked' => function ($data) {
-                return $data['loop_iterator'] % 2 === 0;
-            },
-        ])
-    )
+    new CheckBoxColumn([
+        'name' => 'checkbox',
+        'checked' => function ($data) {
+            return $data['loop_iterator'] % 2 === 0;
+        },
+    ])
+)
     ->addColumn(
         new DateTimeColumn([
             'name' => 'date',
