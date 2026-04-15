@@ -94,6 +94,7 @@ class Template
     public static $AssetsArray = [];
 
     private $template_file;
+    private $templatefile;
 
     private $replacement_array = [];
 
@@ -297,6 +298,8 @@ class Template
             if (!str_contains($pattern, '::')) {
                 $pattern = 'self::'.$pattern;
                 $class = $this;
+                            $class->templatefile = $this->templatefile;
+
             } else {
                 $parts = explode('::', $pattern);
                 // UtmDump([$pattern,$parts,$function]);
@@ -304,7 +307,6 @@ class Template
 
                 // $function = $parts[1];
             }
-            $class->template_file = $this->template_file;
 
             $html_text = preg_replace_callback(\constant($pattern), [$class, $function], $html_text);
         }
