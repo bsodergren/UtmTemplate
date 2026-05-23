@@ -18,19 +18,19 @@ trait Callbacks
     use Variable;
 
     public $registered_callbacks = [
-        'LANG_CALLBACK' => 'callback_text_variable',
-        'VARIABLE_CALLBACK' => 'callback_parse_variable',
-        'JS_VAR_CALLBACK' => 'callback_parse_variable',
-        'CSS_VAR_CALLBACK' => 'callback_parse_variable',
+        'LANG_CALLBACK'       => 'callback_text_variable',
+        'VARIABLE_CALLBACK'   => 'callback_parse_variable',
+        'JS_VAR_CALLBACK'     => 'callback_parse_variable',
+        'CSS_VAR_CALLBACK'    => 'callback_parse_variable',
         'STYLESHEET_CALLBACK' => 'callback_parse_include',
         'JAVASCRIPT_CALLBACK' => 'callback_parse_include',
-        'TEMPLATE_CALLBACK' => 'callback_parse_template',
-        'IF_CALLBACK' => 'callback_if_statement',
-        'EXPLODE_CALLBACK' => 'callback_explode_callback',
-        'BUTTON_CALLBACK' => 'callback_parse_button',
-        'ICON_CALLBACK' => 'callback_parse_icon',
-        'LOOP_CALLBACK' => 'callback_loop_function',
-        'MAGICVAR_CALLBACK' => 'callback_magic_function',
+        'TEMPLATE_CALLBACK'   => 'callback_parse_template',
+        'IF_CALLBACK'         => 'callback_if_statement',
+        'EXPLODE_CALLBACK'    => 'callback_explode_callback',
+        'BUTTON_CALLBACK'     => 'callback_parse_button',
+        'ICON_CALLBACK'       => 'callback_parse_icon',
+        'LOOP_CALLBACK'       => 'callback_loop_function',
+        'MAGICVAR_CALLBACK'   => 'callback_magic_function',
     ];
 
     public static function get_callback($method)
@@ -60,12 +60,12 @@ trait Callbacks
     {
         $data = str_getcsv($matches[1], ',', "'");
 
-        return str_replace($data[1], $data[2], $data[0]).$data[2];
+        return str_replace($data[1], $data[2], $data[0]) . $data[2];
     }
 
     public function callback_parse_source_include($matches)
     {
-        if ('!' == $matches[1]) {
+        if ($matches[1] == '!') {
             return '';
         }
 
@@ -76,29 +76,37 @@ trait Callbacks
 
     public function callback_parse_include($matches)
     {
-        if ('!' == $matches[1]) {
+        if ($matches[1] == '!') {
             return '';
         }
         $method = $matches[2];
+        if ($method == 'javascript') {
+            if(array_key_exists(4, $matches)){
+                if(str_contains($matches[4], '?type=')){
+                $type= str_replace('?type=', '', $matches[4]);
+                }
+            }
 
-        return Elements::$method($matches[3]);
+        }
+
+        return Elements::$method($matches[3],$type ?? null);
     }
 
     public function callback_parse_template($matches)
     {
-        $ext = 'html';
+        $ext         = 'html';
         $param_array = [];
-        if ('!' == $matches[1]) {
+        if ($matches[1] == '!') {
             return '';
         }
 
         $template = $matches[3];
 
-        if ('' != $matches[4]) {
+        if ($matches[4] != '') {
             $params = explode('&', $matches[4]);
             foreach ($params as $values) {
                 $array = explode('=', $values);
-                if ('ext' == $array[0]) {
+                if ($array[0] == 'ext') {
                     $ext = $array[1];
 
                     continue;
@@ -114,13 +122,13 @@ trait Callbacks
     {
         $dom = HtmlDomParser::str_get_html($text);
 
-        if (false === $dom) {
+        if ($dom === false) {
             return $text;
         }
 
         $elems = $dom->find('a');
 
-        if (0 == \count($elems)) {
+        if (\count($elems) == 0) {
             return $text;
         }
 
@@ -137,7 +145,7 @@ trait Callbacks
     {
         switch ($matches[1]) {
             case 'TemplateId':
-                $html = ' template-d-filename="'.$this->template_file.'"';
+                $html = ' template-d-filename="' . $this->template_file . '"';
 
                 return $html;
                 break;
@@ -148,32 +156,32 @@ trait Callbacks
 
     private function callback_badge($matches)
     {
-        $text = $matches[3];
-        $font = '';
+        $text  = $matches[3];
+        $font  = '';
         $class = $matches[2];
         if (str_contains($matches[2], ',')) {
-            $arr = explode(',', $matches[2]);
+            $arr   = explode(',', $matches[2]);
             $class = $arr[0];
-            $font = 'fs-'.$arr[1];
+            $font  = 'fs-' . $arr[1];
         }
 
-        $style = 'class="badge text-bg-'.$class.' '.$font.'"';
+        $style = 'class="badge text-bg-' . $class . ' ' . $font . '"';
 
-        return '<span '.$style.'>'.$text.'</span>';
+        return '<span ' . $style . '>' . $text . '</span>';
     }
 
     private function callback_color($matches)
     {
-        $text = $matches[3];
+        $text  = $matches[3];
         $style = 'style="';
         if (str_contains($matches[2], ',')) {
             $colors = explode(',', $matches[2]);
-            $style .= 'color: '.$colors[0].'; background:'.$colors[1].';';
+            $style .= 'color: ' . $colors[0] . '; background:' . $colors[1] . ';';
         } else {
-            $style .= 'color: '.$matches[2].';';
+            $style .= 'color: ' . $matches[2] . ';';
         }
         $style .= '"';
 
-        return '<span '.$style.'>'.$text.'</span>';
+        return '<span ' . $style . '>' . $text . '</span>';
     }
 }

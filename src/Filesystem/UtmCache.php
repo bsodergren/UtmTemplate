@@ -8,11 +8,12 @@ use UTMTemplate\Template;
 class UtmCache
 {
     public static $stash;
+
     public static $expire = 900;
 
     public static function init()
     {
-        if (!is_dir(Template::$CACHE_DIR)) {
+        if (! is_dir(Template::$CACHE_DIR)) {
             mkdir(Template::$CACHE_DIR, 0777, true);
         }
 
@@ -23,9 +24,10 @@ class UtmCache
 
     public static function get($key)
     {
-        if (false === Template::$USE_TEMPLATE_CACHE) {
+        if (Template::$USE_TEMPLATE_CACHE === false) {
             // utmdd(Template::$USE_TEMPLATE_CACHE);
-            return null;
+
+            return Template::$USE_TEMPLATE_CACHE;
         }
 
         return self::$stash->get($key);
@@ -33,8 +35,8 @@ class UtmCache
 
     public static function put($key, $value)
     {
-        if (false === Template::$USE_TEMPLATE_CACHE) {
-            return false;
+        if (Template::$USE_TEMPLATE_CACHE === false) {
+            return Template::$USE_TEMPLATE_CACHE;
         }
 
         return self::$stash->put($key, $value, self::$expire);

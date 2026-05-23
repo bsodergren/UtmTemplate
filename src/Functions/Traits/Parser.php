@@ -7,7 +7,7 @@ trait Parser
     private function parse_variable($matches)
     {
         $text = '';
-        $key = $matches[1];
+        $key  = $matches[1];
 
         if (\defined($key)) {
             $text = \constant($key);
@@ -23,7 +23,7 @@ trait Parser
         if (\array_key_exists(2, $matches)
         && \array_key_exists(3, $matches)
         ) {
-            if ('+' == $matches[2]) {
+            if ($matches[2] == '+') {
                 $text = (int) $text + (int) $matches[3];
             }
         }
@@ -42,9 +42,14 @@ trait Parser
 
     private function parseVars($matches)
     {
-        if (0 == \count($matches)) {
+        if (\count($matches) == 0) {
             return [];
         }
+
+        if (! array_key_exists(2, $matches)) {
+            return [];
+        }
+
         $parts = explode(',', $matches[2]);
         foreach ($parts as $value) {
             if (str_contains($value, '=')) {
@@ -53,9 +58,11 @@ trait Parser
                     $q_parts = explode('?', $v_parts[0]);
 
                     $values['query'][$q_parts[1]] = $v_parts[1];
+
                     continue;
                 }
                 $values[$v_parts[0]] = $v_parts[1];
+
                 continue;
             }
             $values['var'][] = $value;

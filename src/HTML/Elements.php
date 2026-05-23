@@ -16,7 +16,7 @@ class Elements
 
     public static function url($url, $text, $class = '', $extra = '')
     {
-        return Render::return(self::$ElementsDir.'/a', ['LINK' => $url, 'CLASS' => $class, 'EXTRA' => $extra, 'TEXT' => $text]);
+        return Render::return(self::$ElementsDir . '/a', ['LINK' => $url, 'CLASS' => $class, 'EXTRA' => $extra, 'TEXT' => $text]);
     }
 
     public static function template($template)
@@ -24,41 +24,42 @@ class Elements
         return Render::return($template, []);
     }
 
-    public static function stylesheet($stylesheet)
+    public static function stylesheet($stylesheet, $type = 'text/css')
     {
         if (str_starts_with($stylesheet, 'http')) {
             $stylesheet_link = $stylesheet;
         } else {
             $stylesheet_link = Fileloader::getIncludeFile($stylesheet, 'css');
-            if (null === $stylesheet_link) {
+            if ($stylesheet_link === null) {
                 return '';
             }
         }
 
-        return Render::return(self::$ElementsDir.'/link', ['CSS_URL' => $stylesheet_link]);
+        return Render::return(self::$ElementsDir . '/link', ['CSS_URL' => $stylesheet_link]);
     }
 
-    public static function javascript($javafile)
+    public static function javascript($javafile, $type = 'text/javascript')
     {
         if (str_starts_with($javafile, 'http')) {
             $javafile_link = $javafile;
         } else {
             $javafile_link = Fileloader::getIncludeFile($javafile, 'js');
-            if (null === $javafile_link) {
+            if ($javafile_link === null) {
                 return '';
             }
         }
+        // $type = 'text/javascript';
 
-        return Render::return(self::$ElementsDir.'/script', ['SCRIPT_URL' => $javafile_link]);
+        return Render::return(self::$ElementsDir . '/script', ['SCRIPT_URL' => $javafile_link, 'TYPE' => $type]);
     }
 
     public static function addButton($text, $type = 'button', $class = 'btn button', $extra = '', $javascript = '')
     {
-        return Render::return(self::$ElementsDir.'/button', [
-            'TEXT' => $text,
-            'TYPE' => $type,
-            'CLASS' => $class,
-            'EXTRA' => $extra,
+        return Render::return(self::$ElementsDir . '/button', [
+            'TEXT'       => $text,
+            'TYPE'       => $type,
+            'CLASS'      => $class,
+            'EXTRA'      => $extra,
             'JAVASCRIPT' => $javascript,
         ]);
     }
@@ -66,24 +67,24 @@ class Elements
     public static function add_hidden($name, $value, $attributes = '')
     {
         $html = '';
-        $html .= '<input '.$attributes.' type="hidden" name="'.$name.'"  value="'.$value.'">';
+        $html .= '<input ' . $attributes . ' type="hidden" name="' . $name . '"  value="' . $value . '">';
 
-        return $html."\n";
+        return $html . "\n";
     }
 
     public static function draw_checkbox($name, $value, $text = '')
     {
         global $pub_keywords;
 
-        $checked = '';
+        $checked       = '';
         $current_value = $value;
 
-        if (1 == $current_value) {
+        if ($current_value == 1) {
             $checked = 'checked';
         }
 
-        $html = '<input type="hidden" name="'.$name.'" value="0">';
-        $html .= '<input class="form-check-input" type="checkbox" name="'.$name.'" value=1 '.$checked.'>'.$text;
+        $html = '<input type="hidden" name="' . $name . '" value="0">';
+        $html .= '<input class="form-check-input" type="checkbox" name="' . $name . '" value=1 ' . $checked . '>' . $text;
 
         return $html;
     }
@@ -95,15 +96,15 @@ class Elements
         if ($timeout_sec > 0) {
             $timeout = $timeout_sec / 100;
 
-            $p = new ProgressBar();
-            if ('' != $text) {
+            $p = new ProgressBar;
+            if ($text != '') {
                 $textLength = imagefontwidth('12') * \strlen($text);
-                $p->setStyle(['width' => $textLength.'px', 'rounded' => true]);
+                $p->setStyle(['width' => $textLength . 'px', 'rounded' => true]);
             }
 
             $p->render();
 
-            for ($i = 0; $i < ($size = 100); ++$i) {
+            for ($i = 0; $i < ($size = 100); $i++) {
                 $p->setProgressBarProgress($i * 100 / $size, $text);
                 usleep(1000000 * $timeout);
             }
@@ -111,8 +112,8 @@ class Elements
         }
 
         echo Render::return(
-            self::$ElementsDir.'/javascript',
-            ['javascript' => "window.location.href = '".$url."';"]
+            self::$ElementsDir . '/javascript',
+            ['javascript' => "window.location.href = '" . $url . "';"]
         );
     }
 
@@ -122,18 +123,18 @@ class Elements
         $idx = 0;
         foreach ($array as $name => $value) {
             $checked = '';
-            ++$idx;
+            $idx++;
             if ($selected == $value['value']) {
                 $checked = ' checked';
             }
 
             $btn .= Render::html(
-                self::$ElementsDir.'/radiobtn',
+                self::$ElementsDir . '/radiobtn',
                 [
-                    'Name' => $fieldName,
-                    'label' => $value['name'],
-                    'Value' => $value['value'],
-                    'Id' => $fieldName.'_'.$idx,
+                    'Name'    => $fieldName,
+                    'label'   => $value['name'],
+                    'Value'   => $value['value'],
+                    'Id'      => $fieldName . '_' . $idx,
                     'checked' => $checked,
                 ]
             );
@@ -144,6 +145,6 @@ class Elements
 
     public static function Comment($text)
     {
-        return \PHP_EOL.'<!-- ---------- '.$text.' ----------- --->'.\PHP_EOL;
+        return \PHP_EOL . '<!-- ---------- ' . $text . ' ----------- --->' . \PHP_EOL;
     }
 }
