@@ -16,23 +16,26 @@ class ImageSourceSet
     private const SRCSET_PART_PATTERN = '/^[^\s,]+\.(webp|avif|jpe?g|png|gif|svg)(\s+\d+[wx])?$/i';
 
     private array $sources = [];
+
     private string $fallback;
+
     private array $formats = ['webp', 'avif', 'jpg'];
+
     private ?string $alt = null;
 
     public function __construct(string $fallback, ?string $alt = null)
     {
         $this->fallback = $fallback;
-        $this->alt = $alt;
+        $this->alt      = $alt;
     }
 
     /**
      * Add a source with srcset
      *
-     * @param string      $srcset Source set (e.g., "image-400w.webp 400w, image-800w.webp 800w")
-     * @param string|null $media  Media query (e.g., "(max-width: 400px)")
-     * @param string|null $type   MIME type (e.g., "image/webp")
-     * @return self
+     * @param  string  $srcset  Source set (e.g., "image-400w.webp 400w, image-800w.webp 800w")
+     * @param  string|null  $media  Media query (e.g., "(max-width: 400px)")
+     * @param  string|null  $type  MIME type (e.g., "image/webp")
+     *
      * @throws \InvalidArgumentException If srcset too long or format invalid
      */
     public function addSource(string $srcset, ?string $media = null, ?string $type = null): self
@@ -41,14 +44,15 @@ class ImageSourceSet
         if (strlen($srcset) > self::MAX_SRCSET_LENGTH) {
             throw new \InvalidArgumentException('srcset must not exceed ' . self::MAX_SRCSET_LENGTH . ' characters');
         }
-        if ($srcset !== '' && !$this->isValidSrcsetFormat($srcset)) {
+        if ($srcset !== '' && ! $this->isValidSrcsetFormat($srcset)) {
             throw new \InvalidArgumentException('srcset must contain valid image URLs with optional width/descriptor (e.g. image.webp 400w)');
         }
         $this->sources[] = [
             'srcset' => $srcset,
-            'media' => $media,
-            'type' => $type,
+            'media'  => $media,
+            'type'   => $type,
         ];
+
         return $this;
     }
 
@@ -66,15 +70,15 @@ class ImageSourceSet
                 return false;
             }
         }
+
         return true;
     }
 
     /**
      * Add multiple sources for different formats
      *
-     * @param array $sources Array of sources [format => srcset]
-     * @param string|null $media Media query
-     * @return self
+     * @param  array  $sources  Array of sources [format => srcset]
+     * @param  string|null  $media  Media query
      */
     public function addFormats(array $sources, ?string $media = null): self
     {
@@ -82,18 +86,19 @@ class ImageSourceSet
             $type = $this->getMimeType($format);
             $this->addSource($srcset, $media, $type);
         }
+
         return $this;
     }
 
     /**
      * Set supported formats (order matters - first is preferred)
      *
-     * @param array $formats Array of format strings (e.g., ['webp', 'avif', 'jpg'])
-     * @return self
+     * @param  array  $formats  Array of format strings (e.g., ['webp', 'avif', 'jpg'])
      */
     public function setFormats(array $formats): self
     {
         $this->formats = $formats;
+
         return $this;
     }
 
@@ -103,20 +108,20 @@ class ImageSourceSet
     public static function getMimeType(string $format): string
     {
         return match (strtolower($format)) {
-            'webp' => 'image/webp',
-            'avif' => 'image/avif',
+            'webp'        => 'image/webp',
+            'avif'        => 'image/avif',
             'jpg', 'jpeg' => 'image/jpeg',
-            'png' => 'image/png',
-            'gif' => 'image/gif',
-            'svg' => 'image/svg+xml',
-            default => 'image/jpeg',
+            'png'         => 'image/png',
+            'gif'         => 'image/gif',
+            'svg'         => 'image/svg+xml',
+            default       => 'image/jpeg',
         };
     }
 
     /**
      * Render the <picture> element
      *
-     * @param bool $lazyLoad Enable lazy loading
+     * @param  bool  $lazyLoad  Enable lazy loading
      * @return string HTML string
      */
     public function render(bool $lazyLoad = true): string
@@ -181,7 +186,6 @@ class ImageSourceSet
      */
     public function hasSources(): bool
     {
-        return !empty($this->sources);
+        return ! empty($this->sources);
     }
 }
-

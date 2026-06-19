@@ -27,7 +27,7 @@ class CarouselItem
         $this->id = IdSanitizer::sanitize($id);
 
         // Sanitize link URL
-        if (!empty($link)) {
+        if (! empty($link)) {
             $this->link = UrlValidator::sanitize($link);
         }
 
@@ -53,7 +53,7 @@ class CarouselItem
     /**
      * Sanitize custom attributes (whitelist + reject dangerous patterns)
      *
-     * @param array<string, mixed> $attributes Attributes to sanitize
+     * @param  array<string, mixed>  $attributes  Attributes to sanitize
      * @return array<string, string> Sanitized attributes
      */
     private function sanitizeAttributes(array $attributes): array
@@ -63,7 +63,7 @@ class CarouselItem
         foreach ($attributes as $key => $value) {
             $key = (string) $key;
 
-            if (!self::isAllowedAttribute($key)) {
+            if (! self::isAllowedAttribute($key)) {
                 continue;
             }
 
@@ -83,6 +83,7 @@ class CarouselItem
         if (in_array($key, self::ALLOWED_ATTRIBUTES, true)) {
             return true;
         }
+
         return str_starts_with($key, 'aria-');
     }
 
@@ -107,21 +108,49 @@ class CarouselItem
     }
 
     /**
+     * Check if item has class Attribute
+     */
+    public function hasClassAttribute(): bool
+    {
+        if (array_key_exists('class', $this->attributes)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getClassAttribute(): string
+    {
+        if (array_key_exists('class', $this->attributes)) {
+            return $this->attributes['class'];
+        }
+
+        return '';
+    }
+
+    public function getDataAttribute(): string
+    {
+        if (array_key_exists('data-id', $this->attributes)) {
+            return 'data-id="' . $this->attributes['data-id'] . '"';
+        }
+
+        return '';
+    }
+
+    /**
      * Set image source set for responsive images
      *
-     * @param ImageSourceSet $sourceSet Image source set
-     * @return self
+     * @param  ImageSourceSet  $sourceSet  Image source set
      */
     public function setImageSourceSet(ImageSourceSet $sourceSet): self
     {
         $this->imageSourceSet = $sourceSet;
+
         return $this;
     }
 
     /**
      * Get image source set
-     *
-     * @return ImageSourceSet|null
      */
     public function getImageSourceSet(): ?ImageSourceSet
     {
@@ -130,8 +159,6 @@ class CarouselItem
 
     /**
      * Check if item has responsive image source set
-     *
-     * @return bool
      */
     public function hasImageSourceSet(): bool
     {
@@ -144,13 +171,12 @@ class CarouselItem
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'content' => $this->content,
-            'image' => $this->image,
-            'link' => $this->link,
+            'id'         => $this->id,
+            'title'      => $this->title,
+            'content'    => $this->content,
+            'image'      => $this->image,
+            'link'       => $this->link,
             'attributes' => $this->attributes,
         ];
     }
 }
-

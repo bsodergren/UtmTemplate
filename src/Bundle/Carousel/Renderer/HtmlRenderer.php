@@ -18,7 +18,7 @@ class HtmlRenderer extends AbstractRenderer
     /**
      * Render HTML structure
      *
-     * @param Carousel $carousel The carousel to render
+     * @param  Carousel  $carousel  The carousel to render
      * @return string HTML output
      */
     public function render(Carousel $carousel): string
@@ -35,18 +35,18 @@ class HtmlRenderer extends AbstractRenderer
     /**
      * Render HTML structure
      *
-     * @param RenderContext $context Render context
+     * @param  RenderContext  $context  Render context
      * @return string HTML output
      */
     private function renderHtml(RenderContext $context): string
     {
-        $id = $context->getId();
-        $type = $context->getType();
-        $items = $context->getItems();
+        $id      = $context->getId();
+        $type    = $context->getType();
+        $items   = $context->getItems();
         $options = $context->getOptions();
 
         if (empty($items)) {
-            throw new Exception\EmptyCarouselException();
+            throw new Exception\EmptyCarouselException;
         }
 
         $transition = $options['transition'] ?? 'slide';
@@ -54,12 +54,12 @@ class HtmlRenderer extends AbstractRenderer
         if (isset($options['customTransition']) && is_array($options['customTransition'])) {
             $transition = 'custom';
         }
-        $theme = $options['theme'] ?? 'auto';
+        $theme           = $options['theme'] ?? 'auto';
         $hasCustomColors = isset($options['themeColors']) && is_array($options['themeColors']);
         // Only add data-theme attribute if theme is explicitly set (not default 'auto') or custom colors provided
         // This maintains backward compatibility with CarouselRenderer
         $themeAttr = ($theme !== 'auto' || $hasCustomColors) ? ' data-theme="' . $this->escape($theme) . '"' : '';
-        $html = '<div class="carousel-container" id="carousel-' . $this->escape($id) . '" data-carousel-id="' . $this->escape($id) . '" data-carousel-type="' . $this->escape($type) . '" data-carousel-transition="' . $this->escape($transition) . '"' . $themeAttr . '>';
+        $html      = '<div class="carousel-container" id="carousel-' . $this->escape($id) . '" data-carousel-id="' . $this->escape($id) . '" data-carousel-type="' . $this->escape($type) . '" data-carousel-transition="' . $this->escape($transition) . '"' . $themeAttr . '>';
 
         // Loading indicator
         $html .= '<div class="carousel-loading" aria-hidden="true" role="status" aria-label="' . $this->escape($this->translator->translate('loading')) . '">';
@@ -76,8 +76,6 @@ class HtmlRenderer extends AbstractRenderer
         $html .= '<div class="carousel-track" role="region" aria-label="' . $this->escape($this->translator->translate('carousel')) . '" aria-live="polite" aria-atomic="true">';
 
         foreach ($items as $index => $item) {
-                    utmdump($item);
-
             $html .= $this->renderItem($item, $index, $type, $context);
         }
 
@@ -86,13 +84,13 @@ class HtmlRenderer extends AbstractRenderer
         // Navigation arrows
         if ($options['showArrows'] ?? true) {
             $html .= '<button class="carousel-arrow carousel-arrow-prev" aria-label="' . $this->escape($this->translator->translate('previous_slide')) . '" type="button">';
-            $html .= '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">';
+            $html .= '<svg width="24" height="24" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">';
             $html .= '<path d="M15 18l-6-6 6-6"/>';
             $html .= '</svg>';
             $html .= '</button>';
 
             $html .= '<button class="carousel-arrow carousel-arrow-next" aria-label="' . $this->escape($this->translator->translate('next_slide')) . '" type="button">';
-            $html .= '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">';
+            $html .= '<svg width="24" height="24" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">';
             $html .= '<path d="M9 18l6-6-6-6"/>';
             $html .= '</svg>';
             $html .= '</button>';
@@ -130,19 +128,18 @@ class HtmlRenderer extends AbstractRenderer
     /**
      * Render a single carousel item
      *
-     * @param CarouselItem $item The item to render
-     * @param int $index Item index
-     * @param string $type Carousel type
-     * @param RenderContext $context Render context
+     * @param  CarouselItem  $item  The item to render
+     * @param  int  $index  Item index
+     * @param  string  $type  Carousel type
+     * @param  RenderContext  $context  Render context
      * @return string HTML output
      */
     private function renderItem(CarouselItem $item, int $index, string $type, RenderContext $context): string
     {
-        $items = $context->getItems();
-        $isActive = $index === 0;
+        $items       = $context->getItems();
+        $isActive    = $index === 0;
         $totalSlides = count($items);
-
-        $html = '<div class="carousel-slide' . ($isActive ? ' active' : '') . '" ';
+        $html        = '<div class="carousel-slide' . ($isActive ? ' active' : '') . '" ';
         $html .= 'data-slide-index="' . $index . '" ';
         $html .= 'role="group" ';
         $html .= 'aria-roledescription="slide" ';
@@ -175,20 +172,21 @@ class HtmlRenderer extends AbstractRenderer
         }
 
         $html .= '</div>';
+
         return $html;
     }
 
     /**
      * Render image item
      *
-     * @param CarouselItem $item The item to render
-     * @param int $index Item index
-     * @param RenderContext $context Render context
+     * @param  CarouselItem  $item  The item to render
+     * @param  int  $index  Item index
+     * @param  RenderContext  $context  Render context
      * @return string HTML output
      */
     private function renderImageItem(CarouselItem $item, int $index, RenderContext $context): string
     {
-        $html = '';
+        $html     = '';
         $lazyLoad = $context->getOption('lazyLoad', true);
         // Load first 2 slides immediately, lazy load the rest
         $shouldLazyLoad = $lazyLoad && $index > 1;
@@ -200,7 +198,7 @@ class HtmlRenderer extends AbstractRenderer
         if ($item->hasImageSourceSet()) {
             // Use responsive image source set
             $html .= '<div class="carousel-image-wrapper">';
-            $html .= $item->getImageSourceSet()->render(!$shouldLazyLoad);
+            $html .= $item->getImageSourceSet()->render(! $shouldLazyLoad);
             $html .= '</div>';
         } elseif ($item->image) {
             // Fallback to regular image
@@ -232,21 +230,20 @@ class HtmlRenderer extends AbstractRenderer
     /**
      * Render card item
      *
-     * @param CarouselItem $item The item to render
-     * @param int $index Item index
-     * @param RenderContext $context Render context
+     * @param  CarouselItem  $item  The item to render
+     * @param  int  $index  Item index
+     * @param  RenderContext  $context  Render context
      * @return string HTML output
      */
     private function renderCardItem(CarouselItem $item, int $index, RenderContext $context): string
     {
-        $html = '<div class="carousel-card">';
-        $lazyLoad = $context->getOption('lazyLoad', true);
+        $html           = '<div class="carousel-card ' . $item->getClassAttribute() . '" ' . $item->getDataAttribute() . '>';
+        $lazyLoad       = $context->getOption('lazyLoad', true);
         $shouldLazyLoad = $lazyLoad && $index > 1;
-
         if ($item->hasImageSourceSet()) {
             // Use responsive image source set
             $html .= '<div class="carousel-card-image">';
-            $html .= $item->getImageSourceSet()->render(!$shouldLazyLoad);
+            $html .= $item->getImageSourceSet()->render(! $shouldLazyLoad);
             $html .= '</div>';
         } elseif ($item->image) {
             // Fallback to regular image
@@ -278,13 +275,14 @@ class HtmlRenderer extends AbstractRenderer
         $html .= '</div>';
 
         $html .= '</div>';
+
         return $html;
     }
 
     /**
      * Render testimonial item
      *
-     * @param CarouselItem $item The item to render
+     * @param  CarouselItem  $item  The item to render
      * @return string HTML output
      */
     private function renderTestimonialItem(CarouselItem $item): string
@@ -309,27 +307,28 @@ class HtmlRenderer extends AbstractRenderer
         }
 
         $html .= '</div>';
+
         return $html;
     }
 
     /**
      * Render gallery item
      *
-     * @param CarouselItem $item The item to render
-     * @param int $index Item index
-     * @param RenderContext $context Render context
+     * @param  CarouselItem  $item  The item to render
+     * @param  int  $index  Item index
+     * @param  RenderContext  $context  Render context
      * @return string HTML output
      */
     private function renderGalleryItem(CarouselItem $item, int $index, RenderContext $context): string
     {
-        $html = '<div class="carousel-gallery-item">';
-        $lazyLoad = $context->getOption('lazyLoad', true);
+        $html           = '<div class="carousel-gallery-item">';
+        $lazyLoad       = $context->getOption('lazyLoad', true);
         $shouldLazyLoad = $lazyLoad && $index > 1;
 
         if ($item->hasImageSourceSet()) {
             // Use responsive image source set
             $html .= '<div class="carousel-gallery-image-wrapper">';
-            $html .= $item->getImageSourceSet()->render(!$shouldLazyLoad);
+            $html .= $item->getImageSourceSet()->render(! $shouldLazyLoad);
             $html .= '</div>';
         } elseif ($item->image) {
             // Fallback to regular image
@@ -352,13 +351,14 @@ class HtmlRenderer extends AbstractRenderer
         }
 
         $html .= '</div>';
+
         return $html;
     }
 
     /**
      * Render simple item
      *
-     * @param CarouselItem $item The item to render
+     * @param  CarouselItem  $item  The item to render
      * @return string HTML output
      */
     private function renderSimpleItem(CarouselItem $item): string
@@ -374,7 +374,7 @@ class HtmlRenderer extends AbstractRenderer
         }
 
         $html .= '</div>';
+
         return $html;
     }
 }
-

@@ -17,7 +17,7 @@ class CssRenderer extends AbstractRenderer
     /**
      * Render CSS styles
      *
-     * @param Carousel $carousel The carousel to render
+     * @param  Carousel  $carousel  The carousel to render
      * @return string CSS output
      */
     public function render(Carousel $carousel): string
@@ -34,14 +34,14 @@ class CssRenderer extends AbstractRenderer
     /**
      * Render CSS styles
      *
-     * @param RenderContext $context Render context
+     * @param  RenderContext  $context  Render context
      * @return string CSS output
      */
     private function renderCss(RenderContext $context): string
     {
-        $id = $context->getId();
+        $id      = $context->getId();
         $options = $context->getOptions();
-        $type = $context->getType();
+        $type    = $context->getType();
 
         $cached = RenderCacheService::getCachedContent($id, 'css');
         if ($cached !== null && $cached !== '') {
@@ -54,14 +54,14 @@ class CssRenderer extends AbstractRenderer
         }
         RenderCacheService::markAsRendered($id, 'html');
 
-        $cssId = '#carousel-' . $this->escapeCssId($id);
-        $gap = $options['gap'] ?? 16;
+        $cssId              = '#carousel-' . $this->escapeCssId($id);
+        $gap                = $options['gap'] ?? 16;
         $transitionDuration = ($options['transitionDuration'] ?? 500) . 'ms';
 
         // Check if theme is enabled
-        $themeMode = $options['theme'] ?? 'auto';
+        $themeMode       = $options['theme'] ?? 'auto';
         $hasCustomColors = isset($options['themeColors']) && is_array($options['themeColors']);
-        $themeEnabled = ($themeMode !== 'auto') || $hasCustomColors;
+        $themeEnabled    = ($themeMode !== 'auto') || $hasCustomColors;
 
         $css = '<style id="carousel-style-' . $this->escape($id) . '">';
 
@@ -109,11 +109,12 @@ class CssRenderer extends AbstractRenderer
         if ($minify) {
             $cssContent = preg_replace('/<style[^>]*>/', '', $css);
             $cssContent = preg_replace('/<\/style>/', '', $cssContent);
-            $minified = CssMinifier::minify($cssContent);
-            $css = '<style id="carousel-style-' . $this->escape($id) . '">' . $minified . '</style>';
+            $minified   = CssMinifier::minify($cssContent);
+            $css        = '<style id="carousel-style-' . $this->escape($id) . '">' . $minified . '</style>';
         }
 
         RenderCacheService::setCachedContent($id, 'css', $css);
+
         return $css;
     }
 
@@ -131,8 +132,8 @@ class CssRenderer extends AbstractRenderer
     /**
      * Get theme CSS variables
      *
-     * @param string $cssId CSS selector ID
-     * @param RenderContext $context Render context
+     * @param  string  $cssId  CSS selector ID
+     * @param  RenderContext  $context  Render context
      * @return string CSS output
      */
     private function getThemeCss(string $cssId, RenderContext $context): string
@@ -140,37 +141,37 @@ class CssRenderer extends AbstractRenderer
         $options = $context->getOptions();
 
         // Check if theme is explicitly set (not default 'auto') or custom colors provided
-        $themeMode = $options['theme'] ?? 'auto';
+        $themeMode       = $options['theme'] ?? 'auto';
         $hasCustomColors = isset($options['themeColors']) && is_array($options['themeColors']);
 
         // If theme is default 'auto' and no custom colors, don't generate theme CSS
         // This maintains backward compatibility - CSS will use direct values, not variables
-        if ($themeMode === 'auto' && !$hasCustomColors) {
+        if ($themeMode === 'auto' && ! $hasCustomColors) {
             return '';
         }
 
-        $theme = Theme::fromArray($options);
-        $mode = $theme->getMode();
+        $theme       = Theme::fromArray($options);
+        $mode        = $theme->getMode();
         $lightColors = $theme->getLightColors();
-        $darkColors = $theme->getDarkColors();
+        $darkColors  = $theme->getDarkColors();
 
         // Map color keys to CSS variable names
         $varMap = [
-            'background' => 'background',
-            'text' => 'text',
-            'arrow' => 'arrow',
-            'arrowHover' => 'arrow-hover',
-            'dot' => 'dot',
-            'dotActive' => 'dot-active',
-            'dotHover' => 'dot-hover',
-            'border' => 'border',
-            'shadow' => 'shadow',
-            'shadowHover' => 'shadow-hover',
+            'background'     => 'background',
+            'text'           => 'text',
+            'arrow'          => 'arrow',
+            'arrowHover'     => 'arrow-hover',
+            'dot'            => 'dot',
+            'dotActive'      => 'dot-active',
+            'dotHover'       => 'dot-hover',
+            'border'         => 'border',
+            'shadow'         => 'shadow',
+            'shadowHover'    => 'shadow-hover',
             'cardBackground' => 'card-background',
-            'cardText' => 'card-text',
-            'cardContent' => 'card-content',
-            'link' => 'link',
-            'linkHover' => 'link-hover',
+            'cardText'       => 'card-text',
+            'cardContent'    => 'card-content',
+            'link'           => 'link',
+            'linkHover'      => 'link-hover',
             'loadingSpinner' => 'loading-spinner',
         ];
 
@@ -241,9 +242,9 @@ class CssRenderer extends AbstractRenderer
     /**
      * Get CSS value with or without theme variable
      *
-     * @param string $varName CSS variable name
-     * @param string $defaultValue Default value
-     * @param bool $themeEnabled Whether theme is enabled
+     * @param  string  $varName  CSS variable name
+     * @param  string  $defaultValue  Default value
+     * @param  bool  $themeEnabled  Whether theme is enabled
      * @return string CSS value
      */
     private function getCssValue(string $varName, string $defaultValue, bool $themeEnabled): string
@@ -254,17 +255,17 @@ class CssRenderer extends AbstractRenderer
     /**
      * Get base CSS
      *
-     * @param string $cssId CSS selector ID
-     * @param int $gap Gap between items
-     * @param string $transitionDuration Transition duration
-     * @param bool $themeEnabled Whether theme variables are enabled
+     * @param  string  $cssId  CSS selector ID
+     * @param  int  $gap  Gap between items
+     * @param  string  $transitionDuration  Transition duration
+     * @param  bool  $themeEnabled  Whether theme variables are enabled
      * @return string CSS output
      */
     private function getBaseCss(string $cssId, int $gap, string $transitionDuration, bool $themeEnabled = false): string
     {
-        $dotBg = $this->getCssValue('dot', 'rgba(0, 0, 0, 0.2)', $themeEnabled);
-        $dotHover = $this->getCssValue('dot-hover', 'rgba(0, 0, 0, 0.4)', $themeEnabled);
-        $dotActive = $this->getCssValue('dot-active', 'rgba(0, 0, 0, 0.8)', $themeEnabled);
+        $dotBg        = $this->getCssValue('dot', 'rgba(0, 0, 0, 0.2)', $themeEnabled);
+        $dotHover     = $this->getCssValue('dot-hover', 'rgba(0, 0, 0, 0.4)', $themeEnabled);
+        $dotActive    = $this->getCssValue('dot-active', 'rgba(0, 0, 0, 0.8)', $themeEnabled);
         $spinnerColor = $this->getCssValue('loading-spinner', '#0066cc', $themeEnabled);
 
         return <<<CSS
@@ -368,7 +369,7 @@ class CssRenderer extends AbstractRenderer
     z-index: 1;
 }
 
-{$cssId}[data-carousel-transition="fade"] .carousel-slide.active {
+{$cssId}[data-carousel-transition="fade"] .carousel-slide.activeSlide {
     opacity: 1;
     z-index: 2;
     position: relative;
@@ -471,7 +472,7 @@ class CssRenderer extends AbstractRenderer
     transform: scale(1.2);
 }
 
-{$cssId} .carousel-dot.active,
+{$cssId} .carousel-dot.activeSlide,
 {$cssId} .carousel-dot[aria-selected="true"] {
     background: {$dotActive};
     width: 24px;
@@ -484,15 +485,15 @@ CSS;
     /**
      * Get image carousel CSS
      *
-     * @param string $cssId CSS selector ID
-     * @param RenderContext $context Render context
-     * @param bool $themeEnabled Whether theme variables are enabled
+     * @param  string  $cssId  CSS selector ID
+     * @param  RenderContext  $context  Render context
+     * @param  bool  $themeEnabled  Whether theme variables are enabled
      * @return string CSS output
      */
     private function getImageCss(string $cssId, RenderContext $context, bool $themeEnabled = false): string
     {
-        $options = $context->getOptions();
-        $height = $options['height'] ?? 'auto';
+        $options   = $context->getOptions();
+        $height    = $options['height'] ?? 'auto';
         $minHeight = ($height === 'auto') ? '400px' : $height;
 
         return <<<CSS
@@ -543,24 +544,24 @@ CSS;
     /**
      * Get card carousel CSS
      *
-     * @param string $cssId CSS selector ID
-     * @param RenderContext $context Render context
+     * @param  string  $cssId  CSS selector ID
+     * @param  RenderContext  $context  Render context
      * @return string CSS output
      */
     private function getCardCss(string $cssId, RenderContext $context, bool $themeEnabled = false): string
     {
-        $options = $context->getOptions();
+        $options       = $context->getOptions();
         $itemsPerSlide = $options['itemsPerSlide'] ?? 3;
-        $slideWidth = 100 / $itemsPerSlide;
-        $gap = $options['gap'] ?? 16;
+        $slideWidth    = 100 / $itemsPerSlide;
+        $gap           = $options['gap'] ?? 16;
 
-        $cardBg = $this->getCssValue('card-background', 'white', $themeEnabled);
-        $cardShadow = $this->getCssValue('shadow', 'rgba(0, 0, 0, 0.1)', $themeEnabled);
+        $cardBg          = $this->getCssValue('card-background', 'white', $themeEnabled);
+        $cardShadow      = $this->getCssValue('shadow', 'rgba(0, 0, 0, 0.1)', $themeEnabled);
         $cardShadowHover = $this->getCssValue('shadow-hover', 'rgba(0, 0, 0, 0.15)', $themeEnabled);
-        $cardText = $this->getCssValue('card-text', '#1a1a1a', $themeEnabled);
-        $cardContent = $this->getCssValue('card-content', '#666', $themeEnabled);
-        $cardLink = $this->getCssValue('link', '#0066cc', $themeEnabled);
-        $cardLinkHover = $this->getCssValue('link-hover', '#0052a3', $themeEnabled);
+        $cardText        = $this->getCssValue('card-text', '#1a1a1a', $themeEnabled);
+        $cardContent     = $this->getCssValue('card-content', '#666', $themeEnabled);
+        $cardLink        = $this->getCssValue('link', '#0066cc', $themeEnabled);
+        $cardLinkHover   = $this->getCssValue('link-hover', '#0052a3', $themeEnabled);
 
         return <<<CSS
 {$cssId} .carousel-track {
@@ -643,8 +644,8 @@ CSS;
     /**
      * Get testimonial carousel CSS
      *
-     * @param string $cssId CSS selector ID
-     * @param bool $themeEnabled Whether theme variables are enabled
+     * @param  string  $cssId  CSS selector ID
+     * @param  bool  $themeEnabled  Whether theme variables are enabled
      * @return string CSS output
      */
     private function getTestimonialCss(string $cssId, bool $themeEnabled = false): string
@@ -695,8 +696,8 @@ CSS;
     /**
      * Get gallery carousel CSS
      *
-     * @param string $cssId CSS selector ID
-     * @param bool $themeEnabled Whether theme variables are enabled
+     * @param  string  $cssId  CSS selector ID
+     * @param  bool  $themeEnabled  Whether theme variables are enabled
      * @return string CSS output
      */
     private function getGalleryCss(string $cssId, bool $themeEnabled = false): string
@@ -758,7 +759,7 @@ CSS;
     transform: scale(1.05);
 }
 
-{$cssId} .carousel-thumbnail.active {
+{$cssId} .carousel-thumbnail.activeSlide {
     border-color: #0066cc;
     opacity: 1;
 }
@@ -776,24 +777,24 @@ CSS;
     /**
      * Get custom transition CSS
      *
-     * @param string $cssId CSS selector ID
-     * @param RenderContext $context Render context
+     * @param  string  $cssId  CSS selector ID
+     * @param  RenderContext  $context  Render context
      * @return string CSS output
      */
     private function getCustomTransitionCss(string $cssId, RenderContext $context): string
     {
-        $options = $context->getOptions();
+        $options          = $context->getOptions();
         $customTransition = $options['customTransition'] ?? null;
 
-        if (!$customTransition || !is_array($customTransition)) {
+        if (! $customTransition || ! is_array($customTransition)) {
             return '';
         }
 
-        $duration = ($customTransition['duration'] ?? 500) . 'ms';
+        $duration       = ($customTransition['duration'] ?? 500) . 'ms';
         $timingFunction = $customTransition['timingFunction'] ?? 'cubic-bezier(0.4, 0, 0.2, 1)';
-        $properties = $customTransition['properties'] ?? ['transform'];
+        $properties     = $customTransition['properties'] ?? ['transform'];
 
-        $transitionValue = implode(', ', array_map(function($prop) use ($duration, $timingFunction) {
+        $transitionValue = implode(', ', array_map(function ($prop) use ($duration, $timingFunction) {
             return "{$prop} {$duration} {$timingFunction}";
         }, $properties));
 
@@ -812,16 +813,16 @@ CSS;
     /**
      * Get custom animations CSS
      *
-     * @param string $cssId CSS selector ID
-     * @param RenderContext $context Render context
+     * @param  string  $cssId  CSS selector ID
+     * @param  RenderContext  $context  Render context
      * @return string CSS output
      */
     private function getCustomAnimationsCss(string $cssId, RenderContext $context): string
     {
-        $options = $context->getOptions();
+        $options    = $context->getOptions();
         $animations = $options['animations'] ?? [];
 
-        if (empty($animations) || !is_array($animations)) {
+        if (empty($animations) || ! is_array($animations)) {
             return '';
         }
 
@@ -840,7 +841,7 @@ CSS;
                 if (isset($value['keyframes'])) {
                     // Generate @keyframes
                     $keyframesName = $value['keyframes']['name'] ?? "carousel-{$name}";
-                    $keyframes = $value['keyframes']['steps'] ?? [];
+                    $keyframes     = $value['keyframes']['steps'] ?? [];
 
                     $css .= "@keyframes {$keyframesName} {\n";
                     foreach ($keyframes as $step => $properties) {
@@ -854,23 +855,23 @@ CSS;
                     $css .= "}\n\n";
 
                     // Add animation class
-                    $duration = $value['duration'] ?? '0.5s';
+                    $duration       = $value['duration'] ?? '0.5s';
                     $timingFunction = $value['timingFunction'] ?? 'ease';
-                    $delay = isset($value['delay']) ? " {$value['delay']}" : '';
+                    $delay          = isset($value['delay']) ? " {$value['delay']}" : '';
                     $iterationCount = isset($value['iterationCount']) ? " {$value['iterationCount']}" : '';
-                    $direction = isset($value['direction']) ? " {$value['direction']}" : '';
+                    $direction      = isset($value['direction']) ? " {$value['direction']}" : '';
 
                     $css .= "{$cssId} .carousel-animation-{$name} {\n";
                     $css .= "    animation: {$keyframesName} {$duration} {$timingFunction}{$delay}{$iterationCount}{$direction};\n";
                     $css .= "}\n\n";
                 } else {
                     // Simple animation definition
-                    $duration = $value['duration'] ?? '0.5s';
+                    $duration       = $value['duration'] ?? '0.5s';
                     $timingFunction = $value['timingFunction'] ?? 'ease';
-                    $delay = isset($value['delay']) ? " {$value['delay']}" : '';
+                    $delay          = isset($value['delay']) ? " {$value['delay']}" : '';
                     $iterationCount = isset($value['iterationCount']) ? " {$value['iterationCount']}" : '';
-                    $direction = isset($value['direction']) ? " {$value['direction']}" : '';
-                    $keyframesName = $value['name'] ?? "carousel-{$name}";
+                    $direction      = isset($value['direction']) ? " {$value['direction']}" : '';
+                    $keyframesName  = $value['name'] ?? "carousel-{$name}";
 
                     $css .= "{$cssId} .carousel-animation-{$name} {\n";
                     $css .= "    animation: {$keyframesName} {$duration} {$timingFunction}{$delay}{$iterationCount}{$direction};\n";
@@ -885,21 +886,21 @@ CSS;
     /**
      * Get responsive CSS
      *
-     * @param string $cssId CSS selector ID
-     * @param RenderContext $context Render context
+     * @param  string  $cssId  CSS selector ID
+     * @param  RenderContext  $context  Render context
      * @return string CSS output
      */
     private function getResponsiveCss(string $cssId, RenderContext $context): string
     {
-        $options = $context->getOptions();
+        $options      = $context->getOptions();
         $desktopItems = $options['itemsPerSlideDesktop'] ?? $options['itemsPerSlide'] ?? 1;
-        $tabletItems = $options['itemsPerSlideTablet'] ?? $options['itemsPerSlide'] ?? 1;
-        $mobileItems = $options['itemsPerSlideMobile'] ?? 1;
-        $gap = $options['gap'] ?? 16;
+        $tabletItems  = $options['itemsPerSlideTablet'] ?? $options['itemsPerSlide'] ?? 1;
+        $mobileItems  = $options['itemsPerSlideMobile'] ?? 1;
+        $gap          = $options['gap'] ?? 16;
 
         $desktopWidth = 100 / $desktopItems;
-        $tabletWidth = 100 / $tabletItems;
-        $mobileWidth = 100 / $mobileItems;
+        $tabletWidth  = 100 / $tabletItems;
+        $mobileWidth  = 100 / $mobileItems;
 
         return <<<CSS
 @media (max-width: 768px) {
@@ -936,4 +937,3 @@ CSS;
 CSS;
     }
 }
-

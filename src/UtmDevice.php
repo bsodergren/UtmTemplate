@@ -35,7 +35,9 @@ class UtmDevice
     public function __construct()
     {
         // self::$DETECT_BROWSER = true;
-        self::$DEVICE = $this->run();
+        if (UtmDevice::$DETECT_BROWSER == true) {
+            self::$DEVICE = $this->run();
+        }
         if (self::$DEFAULT_TEMPLATE === false) {
             self::$DEFAULT_TEMPLATE = Template::$TEMPLATE_DIR;
         }

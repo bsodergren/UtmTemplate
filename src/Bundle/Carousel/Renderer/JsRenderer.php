@@ -17,8 +17,7 @@ class JsRenderer extends AbstractRenderer
     /**
      * Render JavaScript code.
      *
-     * @param Carousel $carousel The carousel to render
-     *
+     * @param  Carousel  $carousel  The carousel to render
      * @return string JavaScript output
      */
     public function render(Carousel $carousel): string
@@ -35,13 +34,12 @@ class JsRenderer extends AbstractRenderer
     /**
      * Render JavaScript code.
      *
-     * @param RenderContext $context Render context
-     *
+     * @param  RenderContext  $context  Render context
      * @return string JavaScript output
      */
     private function renderJs(RenderContext $context): string
     {
-        $id = $context->getId();
+        $id      = $context->getId();
         $options = $context->getOptions();
 
         // Only render JS once per carousel ID
@@ -52,7 +50,7 @@ class JsRenderer extends AbstractRenderer
 
         // Include CarouselAPI and CarouselInstance (only once globally)
         $apiIncluded = RenderCacheService::isApiRendered();
-        if (!$apiIncluded) {
+        if (! $apiIncluded) {
             RenderCacheService::markApiAsRendered();
             $js = '<script id="carousel-api">';
             $js .= CarouselAPI::generate();
@@ -64,9 +62,9 @@ class JsRenderer extends AbstractRenderer
             $js = '';
         }
 
-        $carouselScript = '<script id="carousel-script-'.$this->escape($id).'">';
+        $carouselScript = '<script id="carousel-script-' . $this->escape($id) . '">';
         $carouselScript .= '(function() {';
-        $carouselScript .= 'const carousel = document.getElementById("carousel-'.$this->escape($id).'");';
+        $carouselScript .= 'const carousel = document.getElementById("carousel-' . $this->escape($id) . '");';
         $carouselScript .= 'if (!carousel) return;';
 
         $carouselScript .= $this->getCarouselJs($id, $context);
@@ -78,10 +76,10 @@ class JsRenderer extends AbstractRenderer
         $minify = $options['minify'] ?? false;
         if ($minify) {
             // Extract JS content (between <script> tags) from carousel script only
-            $jsContent = preg_replace('/<script[^>]*>/', '', $carouselScript);
-            $jsContent = preg_replace('/<\/script>/', '', $jsContent);
-            $minified = JsMinifier::minify($jsContent);
-            $carouselScript = '<script id="carousel-script-'.$this->escape($id).'">'.$minified.'</script>';
+            $jsContent      = preg_replace('/<script[^>]*>/', '', $carouselScript);
+            $jsContent      = preg_replace('/<\/script>/', '', $jsContent);
+            $minified       = JsMinifier::minify($jsContent);
+            $carouselScript = '<script id="carousel-script-' . $this->escape($id) . '">' . $minified . '</script>';
         }
 
         $js .= $carouselScript;
@@ -92,33 +90,32 @@ class JsRenderer extends AbstractRenderer
     /**
      * Get carousel JavaScript.
      *
-     * @param string        $id      Carousel ID
-     * @param RenderContext $context Render context
-     *
+     * @param  string  $id  Carousel ID
+     * @param  RenderContext  $context  Render context
      * @return string JavaScript output
      */
     private function getCarouselJs(string $id, RenderContext $context): string
     {
-        $options = $context->getOptions();
-        $autoplay = $options['autoplay'] ?? true ? 'true' : 'false';
+        $options          = $context->getOptions();
+        $autoplay         = $options['autoplay'] ?? true ? 'true' : 'false';
         $autoplayInterval = $options['autoplayInterval'] ?? 5000;
-        $loop = $options['loop'] ?? true ? 'true' : 'false';
-        $transition = $options['transition'] ?? 'slide';
-        $keyboardNav = $options['keyboardNavigation'] ?? true ? 'true' : 'false';
-        $touchSwipe = $options['touchSwipe'] ?? true ? 'true' : 'false';
+        $loop             = $options['loop'] ?? true ? 'true' : 'false';
+        $transition       = $options['transition'] ?? 'slide';
+        $keyboardNav      = $options['keyboardNavigation'] ?? true ? 'true' : 'false';
+        $touchSwipe       = $options['touchSwipe'] ?? true ? 'true' : 'false';
 
         // Virtualization settings
-        $virtualizationEnabled = ($options['virtualization'] ?? false) ? 'true' : 'false';
+        $virtualizationEnabled   = ($options['virtualization'] ?? false) ? 'true' : 'false';
         $virtualizationThreshold = $options['virtualizationThreshold'] ?? 50;
-        $virtualizationBuffer = $options['virtualizationBuffer'] ?? 3;
+        $virtualizationBuffer    = $options['virtualizationBuffer'] ?? 3;
 
         // Analytics settings
-        $analyticsEnabled = ($options['analytics'] ?? false) ? 'true' : 'false';
+        $analyticsEnabled  = ($options['analytics'] ?? false) ? 'true' : 'false';
         $analyticsEndpoint = $this->escape('/api/carousel/analytics'); // Default endpoint
 
         // Get translations for JavaScript
         $translations = [
-            'slide_of' => $this->translator->translate('slide_of', null, ['current' => '{current}', 'total' => '{total}']),
+            'slide_of'          => $this->translator->translate('slide_of', null, ['current' => '{current}', 'total' => '{total}']),
             'image_unavailable' => $this->translator->translate('image_unavailable'),
         ];
 
@@ -134,7 +131,7 @@ const prevBtn = carouselEl.querySelector('.carousel-arrow-prev');
 const nextBtn = carouselEl.querySelector('.carousel-arrow-next');
 const dots = Array.from(carouselEl.querySelectorAll('.carousel-dot'));
 const thumbnails = Array.from(carouselEl.querySelectorAll('.carousel-thumbnail'));
-
+// console.log(slides)
 // Translations
 const translations = {$translationsJs};
 
@@ -226,7 +223,7 @@ function updateCarousel() {
 
     slides.forEach((slide, index) => {
         const isActive = index === currentIndex;
-        slide.classList.toggle('active', isActive);
+        slide.classList.toggle('activeSlide', isActive);
         slide.setAttribute('aria-hidden', !isActive);
         if (isActive) {
             slide.setAttribute('aria-current', 'true');
@@ -253,22 +250,24 @@ function updateCarousel() {
 
     if (dots.length > 0) {
         dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentIndex);
+            dot.classList.toggle('activeSlide', index === currentIndex);
         });
     }
 
     if (thumbnails.length > 0) {
         thumbnails.forEach((thumb, index) => {
-            thumb.classList.toggle('active', index === currentIndex);
+            thumb.classList.toggle('activeSlide', index === currentIndex);
         });
     }
 
     if (track) {
         if (transition === 'slide') {
-            const slideWidth = slides[0]?.offsetWidth || 0;
+            const slideWidth = slides[currentIndex]?.offsetWidth || 0;
+            const leftOffset = -(slides[currentIndex].offsetLeft-slideWidth*2);
             const gap = parseInt(getComputedStyle(track).gap) || 0;
-            const translateX = -(currentIndex * (slideWidth + gap));
+            const translateX = leftOffset //-(currentIndex * (slideWidth + gap));
             track.style.transform = `translateX(\${translateX}px)`;
+            console.log(slideWidth,gap,translateX,currentIndex,leftOffset)
         }
         // For fade transition, opacity is handled by CSS
     }
@@ -287,6 +286,8 @@ function updateCarousel() {
 }
 
 function goToSlide(index) {
+
+
     if (index < 0) {
         currentIndex = loop ? slides.length - 1 : 0;
     } else if (index >= slides.length) {
@@ -294,11 +295,13 @@ function goToSlide(index) {
     } else {
         currentIndex = index;
     }
+    // console.log(index,slides.length ,currentIndex,loop)
     updateCarousel();
     resetAutoplay();
 }
 
 function nextSlide() {
+
     goToSlide(currentIndex + 1);
 }
 
